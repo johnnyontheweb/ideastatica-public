@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Common.props" />
 
   <PropertyGroup>
 	  <TargetFrameworks>net471;netstandard2.1</TargetFrameworks>
