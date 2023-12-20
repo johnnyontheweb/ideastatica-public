@@ -1,51 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IdeaRS.OpenModel.Concrete.CheckResult;
+﻿using IdeaRS.OpenModel;
 using IdeaRS.OpenModel.Message;
-using IdeaRS.OpenModel;
-using System.Xml;
+using IdeaStatiCa.Plugin.Api.RCS.Model;
+using IdeaRS.OpenModel.Concrete.CheckResult;
+using System.Threading;
+using System.Collections.Generic;
+using System;
 
 namespace IdeaStatiCa.Plugin.Api.Rcs
 {
-	public class ProjectResult
-	{
-		public List<SectionConcreteCheckResult> Sections { get; set; } = new List<SectionConcreteCheckResult>();
-
-		public List<NonConformityIssue> Issues { get; set; } = new List<NonConformityIssue>();
-	}
-
-	public class RcsProjectInfo
-	{
-		// Direct path to idea project
-		public string IdeaProjectPath { get; set; }
-
-		// Direct path to open model project
-		public string IdeaOpenModelProjectPath { get; set; }
-		public string OpenMessagesPath { get; set; }
-		public string ProjectName { get; set; }
-
-		public IEnumerable<int> Sections { get; set; } = new List<int>();
-		public IEnumerable<Guid> NonConformities { get; set; } = new List<Guid>();
-
-		public TimeSpan CalculationTimeout { get; set; }
-
-		public override string ToString() => $"Project path: '{IdeaProjectPath}', Project name: '{ProjectName}'";
-	}
 	public interface IRcsController : IDisposable
 	{
 		bool OpenIdeaProject(string ideaProjectPath);
 		bool OpenIdeaProjectFromIdeaOpenModel(string ideaOpenModelProjectPath, string projectName, string ideaOpenMessagesPath);
-		OpenMessages OpenIdeaProjectFromXMLOpenModel(XmlReader openModelXML, string projectName);
-		OpenMessages OpenIdeaProjectFromIdeaOpenModel(OpenModel ideaOpenModel, string projectName);
+		bool OpenIdeaProjectFromIdeaOpenModel(OpenModel ideaOpenModel, string projectName, out OpenMessages messages);
 
-		int[] GetProjectSections();
+		RcsProjectSummaryModel GetProjectSummary(RcsProjectEnum projectEnum);
+		RcsProjectData GetProjectData();
 
+		object GetSettings();
+		object SetSettings(List<RcsSettingModel> changes);
+
+		void SaveAsIdeaProjectFile(string ideaProjectPath);
 
 		bool Calculate(IEnumerable<int> sections);
-		IEnumerable<SectionConcreteCheckResult> GetResultOnSections(params int[] sections);
-		IEnumerable<NonConformityIssue> GetNonConformityIssues(params Guid[] issues);
+		IEnumerable<SectionConcreteCheckResult> GetResultOnSections(CancellationToken cancellationToken, params int[] sections);
+		IEnumerable<NonConformityIssue> GetNonConformityIssues(CancellationToken cancellationToken, params Guid[] issues);
+
+		/// <summary>
+		/// Update data of a RCS section in the RCS project. The section is taken according to pass value in <paramref name="modifiedSectionData"/>
+		/// <see cref="RcsSectionModel.Id"/>
+		/// </summary>
+		/// <param name="modifiedData">Data to set</param>
+		/// <returns>Data of the modified section</returns>
+		RcsSectionModel UpdateSection(RcsSectionModel modifiedSectionData);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="importSetting"></param>
+		/// <param name="reinfCssTemplate"></param>
+		/// <returns></returns>
+		ReinforcedCrossSectionModel ImportReinfCss(ReinfCssImportSetting importSetting, string reinfCssTemplate);
 	}
 }
