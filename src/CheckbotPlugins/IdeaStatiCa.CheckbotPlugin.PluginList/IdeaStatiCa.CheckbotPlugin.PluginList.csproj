@@ -7,14 +7,14 @@
     <Nullable>disable</Nullable>
     <RootNamespace>IdeaStatiCa.PluginSystem.PluginList</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <LangVersion>11</LangVersion>
+    <LangVersion>latest</LangVersion>
     <NoWarn>1591</NoWarn>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Text.Json" Version="6.0.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.8" />
     <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" />
   </ItemGroup>
   
@@ -28,8 +28,4 @@
   <PropertyGroup>
     <PolySharpIncludeRuntimeSupportedAttributes>false</PolySharpIncludeRuntimeSupportedAttributes>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\IdeaStatiCa.CheckbotPlugin.Common\IdeaStatiCa.CheckbotPlugin.Common.csproj" />
-  </ItemGroup>
 </Project>
