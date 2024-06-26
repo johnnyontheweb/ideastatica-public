@@ -5,6 +5,7 @@ using IdeaStatiCa.Plugin;
 using IdeaStatiCa.TeklaStructuresPlugin.Hooks;
 using IdeaStatiCa.TeklaStructuresPlugin.Importers;
 using IdeaStatiCa.TeklaStructuresPlugin.UserData;
+using IdeaStatiCa.TeklaStructuresPlugin.Utilities;
 using System;
 using System.IO;
 using System.Reflection;
@@ -43,7 +44,7 @@ namespace IdeaStatiCa.TeklaStructuresPlugin
 			builder.RegisterType<CutImporter>().SingleInstance().AsImplementedInterfaces();
 
 			builder.RegisterType<Model>();
-			builder.RegisterType<ModelClient>().WithParameter(new TypedParameter(typeof(Tekla.Structures.Model.Model), new Tekla.Structures.Model.Model())).AsImplementedInterfaces();
+			builder.RegisterType<ModelClient>().WithParameter(new TypedParameter(typeof(Tekla.Structures.Model.Model), new Tekla.Structures.Model.Model())).AsImplementedInterfaces().SingleInstance();
 
 			builder.RegisterInstance(pluginLogger).As<IPluginLogger>().SingleInstance();
 
@@ -70,6 +71,7 @@ namespace IdeaStatiCa.TeklaStructuresPlugin
 				.WithLogger(container.Resolve<IPluginLogger>())
 				.WithImporters(x => x.RegisterContainer(new AutofacServiceProvider(container)))
 				.WithPluginHook(appVisibility)
+				.WithItemsComparer(new IdentifierComparer())
 				.WithUserDataSource(container.Resolve<UserDataSource>())
 				.Run(model);
 		}

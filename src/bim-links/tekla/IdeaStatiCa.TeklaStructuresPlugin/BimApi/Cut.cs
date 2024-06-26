@@ -13,18 +13,28 @@ namespace IdeaStatiCa.TeklaStructuresPlugin.BimApi
 
 		private IIdeaObject GetModifiedObject()
 		{
-			IIdeaObject ideaObject = GetMaybe<IIdeaPlate>(ModifiedObjectNo);
-
+			//Check if given Modified Object was process as plate or connected member. This should fix problem of unwanted change
+			IIdeaObject ideaObject = CheckMaybe<IIdeaPlate>(ModifiedObjectNo);
 			if (ideaObject != null)
 			{
-				return ideaObject;
+				ideaObject = GetMaybe<IIdeaPlate>(ModifiedObjectNo);
+
+				if (ideaObject != null)
+				{
+					return ideaObject;
+				}
 			}
 
-			ideaObject = GetMaybe<IIdeaConnectedMember>(new ConnectedMemberIdentifier<IIdeaConnectedMember>(ModifiedObjectNo));
+			ideaObject = CheckMaybe<IIdeaConnectedMember>(new ConnectedMemberIdentifier<IIdeaConnectedMember>(ModifiedObjectNo));
 
 			if (ideaObject != null)
 			{
-				return ideaObject;
+				ideaObject = GetMaybe<IIdeaConnectedMember>(new ConnectedMemberIdentifier<IIdeaConnectedMember>(ModifiedObjectNo));
+
+				if (ideaObject != null)
+				{
+					return ideaObject;
+				}
 			}
 			return null;
 		}
@@ -34,12 +44,14 @@ namespace IdeaStatiCa.TeklaStructuresPlugin.BimApi
 
 		private IIdeaObject GetCuttingObject()
 		{
+
 			IIdeaObject ideaObject = GetMaybe<IIdeaWorkPlane>(CuttingObjectNo);
 
 			if (ideaObject != null)
 			{
 				return ideaObject;
 			}
+
 
 			ideaObject = GetMaybe<IIdeaNegativePlate>(CuttingObjectNo);
 
@@ -48,11 +60,15 @@ namespace IdeaStatiCa.TeklaStructuresPlugin.BimApi
 				return ideaObject;
 			}
 
-			ideaObject = GetMaybe<IIdeaPlate>(CuttingObjectNo);
-
+			ideaObject = CheckMaybe<IIdeaPlate>(CuttingObjectNo);
 			if (ideaObject != null)
 			{
-				return ideaObject;
+				ideaObject = GetMaybe<IIdeaPlate>(CuttingObjectNo);
+
+				if (ideaObject != null)
+				{
+					return ideaObject;
+				}
 			}
 
 			ideaObject = GetMaybe<IIdeaConnectedMember>(new ConnectedMemberIdentifier<IIdeaConnectedMember>(CuttingObjectNo));
@@ -61,7 +77,6 @@ namespace IdeaStatiCa.TeklaStructuresPlugin.BimApi
 			{
 				connectedMember.ConnectedMemberType = IdeaConnectedMemberType.Negative;
 				connectedMember.AutoAddCutByWorkplane = false;
-
 
 				//we cant cut by rod so rod transfer in to pipe
 				if (connectedMember.IdeaMember is IIdeaMember1D mem
