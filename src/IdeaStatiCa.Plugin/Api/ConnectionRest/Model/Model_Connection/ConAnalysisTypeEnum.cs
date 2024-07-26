@@ -5,6 +5,11 @@
 		Stress_Strain,
 		Stiffness,
 		Capacity_Design,
-		Fatigues
+		Fatigues,
+		Total_Design,
+		HorizontalTying,
+		CapacityLoadLevels,
+		FireRestance,
+		Buckling
 	}
 }

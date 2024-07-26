@@ -1,20 +1,29 @@
-﻿namespace IdeaStatiCa.Plugin.Api.ConnectionRest.Model.Model_Connection
+﻿using Newtonsoft.Json;
+
+namespace IdeaStatiCa.Plugin.Api.ConnectionRest.Model.Model_Connection
 {
 	public class ConMember : ConItem
 	{
-		public bool IsStiffening { get; set; }
+		public ConMember() : base()
+		{
+			IsBearing = false;
+		}
+
+		[JsonConstructor]
+		public ConMember(int id, bool isBearing) : base(id)
+		{
+			IsBearing = isBearing;
+		}
 
 		public bool IsContinuous { get; set; }
 
-		public int CrossSectionId { get; set; }
+		public int? CrossSectionId { get; set; }
 
-		public bool MirrorY { get; set; }
+		public bool? MirrorY { get; set; }
 
-		public bool MirrorZ { get; set; }
+		public bool? MirrorZ { get; set; }
 
-		public ConMember(int id):base(id)
-		{
+		public bool IsBearing { get; }
 
-		}
 	}
 }

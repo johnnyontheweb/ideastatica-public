@@ -1,19 +1,20 @@
-﻿using System;
+﻿using IdeaRS.OpenModel;
+using IdeaStatiCa.Plugin;
+using IdeaStatiCa.Plugin.Api.Common;
+using IdeaStatiCa.Plugin.Utilities;
+using IdeaStatiCa.PluginsTools.PluginTools.ApiTools;
+using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text;
-using IdeaStatiCa.Plugin;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.SignalR.Client;
-using PluginConstants = IdeaStatiCa.Plugin.Constants;
 using System.Threading;
-using IdeaRS.OpenModel;
+using System.Threading.Tasks;
 using System.Xml;
-using IdeaStatiCa.PluginsTools.PluginTools.ApiTools;
-using IdeaStatiCa.Plugin.Api.Common;
-using System.Collections.Generic;
+using System.Xml.Serialization;
+using PluginConstants = IdeaStatiCa.Plugin.Constants;
 
 namespace IdeaStatiCa.PluginsTools.ApiTools.HttpWrapper
 {
@@ -27,6 +28,13 @@ namespace IdeaStatiCa.PluginsTools.ApiTools.HttpWrapper
 		public Action<string, int> ProgressLogAction { get; set; } = null;
 		public Action<string> HeartBeatLogAction { get; set; } = null;
 		public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
+
+		protected static readonly JsonSerializerSettings _jsonSerializerSettings;
+
+		static HttpClientWrapper()
+		{
+			_jsonSerializerSettings = JsonTools.CreateIdeaRestJsonSettings();
+		}
 
 		public HttpClientWrapper(IPluginLogger logger, string baseAddress)
 		{
@@ -47,9 +55,9 @@ namespace IdeaStatiCa.PluginsTools.ApiTools.HttpWrapper
 			var url = new Uri(baseUrl, requestUri);
 
 			logger.LogInformation($"Calling {nameof(GetAsync)} method {url} with acceptHeader {acceptHeader}");
-			return await ExecuteClientCallAsync<TResult>(async (client) => 
-			{		
-				return await client.GetAsync(url, token); 
+			return await ExecuteClientCallAsync<TResult>(async (client) =>
+			{
+				return await client.GetAsync(url, token);
 			}
 			, acceptHeader, useHeartbeatCheck);
 		}
@@ -58,7 +66,7 @@ namespace IdeaStatiCa.PluginsTools.ApiTools.HttpWrapper
 		{
 			var result = await ExecuteClientCallAsync<TResult>(async (client) =>
 			{
-				var json = JsonConvert.SerializeObject(requestData);
+				var json = JsonConvert.SerializeObject(requestData, _jsonSerializerSettings);
 				using (var content = new StringContent(json, encoding: Encoding.UTF8, "application/json"))
 				{
 					content.Headers.ContentType.CharSet = "";
@@ -95,7 +103,7 @@ namespace IdeaStatiCa.PluginsTools.ApiTools.HttpWrapper
 				logger.LogInformation($"Starting hub connection on {hubUrl} address");
 				await hubConnection.StartAsync();
 			}
-			
+
 
 			var result = await ExecuteClientCallAsync<TResult>(async (client) =>
 			{
@@ -141,6 +149,22 @@ namespace IdeaStatiCa.PluginsTools.ApiTools.HttpWrapper
 				var url = new Uri(baseUrl, requestUri);
 				return await client.PostAsync(url, stream, token);
 			}, "application/json", useHeartbeatCheck);
+		}
+
+		/// <summary>
+		/// Delete call 
+		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="requestUri"></param>
+		/// <returns></returns>
+		/// <exception cref="NotImplementedException"></exception>
+		public async Task DeleteAsync<TResult>(string requestUri)
+		{
+			await ExecuteClientCallAsync<string>(async (client) =>
+			{
+				var url = new Uri(baseUrl, requestUri);
+				return await client.DeleteAsync(url);
+			}, "text/plain", false);
 		}
 
 		private async Task<TResult> ExecuteClientCallAsync<TResult>(Func<HttpClient, Task<HttpResponseMessage>> clientCall, string acceptHeader, bool useHeartbeatCheck)
@@ -200,7 +224,7 @@ namespace IdeaStatiCa.PluginsTools.ApiTools.HttpWrapper
 					}
 					finally
 					{
-						if(heartbeatChecker != null)
+						if (heartbeatChecker != null)
 						{
 							heartbeatChecker.Stop();
 							heartbeatChecker = null;
@@ -218,7 +242,7 @@ namespace IdeaStatiCa.PluginsTools.ApiTools.HttpWrapper
 		{
 			return acceptHeader switch
 			{
-				"application/json" => JsonConvert.DeserializeObject<TResult>(data),
+				"application/json" => JsonConvert.DeserializeObject<TResult>(data, _jsonSerializerSettings),
 				"application/xml" => DeserializeXml<TResult>(data),
 				"text/plain" => (TResult)Convert.ChangeType(data, typeof(string)),
 				_ => throw new NotImplementedException($"Serialization for accept header {acceptHeader} is not supported.")
@@ -249,8 +273,17 @@ namespace IdeaStatiCa.PluginsTools.ApiTools.HttpWrapper
 				string serializedXml = stringWriter.ToString().Replace("utf-16", "utf-8");
 				return new StringContent(serializedXml, encoding: Encoding.UTF8, "application/xml");
 			}
+			else if (requestContent is OpenModelContainer openModelContainer)
+			{
+				var xmlModel = IdeaRS.OpenModel.Tools.OpenModelContainerToXml(openModelContainer).Replace("utf-16", "utf-8");
+				return new StringContent(xmlModel, Encoding.UTF8, "application/xml");
+			}
+			else if (requestContent is StringContent stringContent)
+			{
+				return stringContent;
+			}
 
-			var content = new StringContent(JsonConvert.SerializeObject(requestContent), encoding: Encoding.UTF8, "application/json");
+			var content = new StringContent(JsonConvert.SerializeObject(requestContent, _jsonSerializerSettings), encoding: Encoding.UTF8, "application/json");
 			content.Headers.ContentType.CharSet = "";
 			return content;
 		}
