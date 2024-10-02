@@ -1,14 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using ConnectionWebClient.Tools;
+using IdeaStatiCa.Api.Connection;
+using IdeaStatiCa.Api.Connection.Model;
 using IdeaStatiCa.Plugin;
-using IdeaStatiCa.Plugin.Api.ConnectionRest;
-using IdeaStatiCa.Plugin.Api.ConnectionRest.Model.Model_Project;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,6 +28,7 @@ namespace ConnectionWebClient.ViewModels
 		ConnectionViewModel? selectedConnection;
 		private ConProject? _projectInfo;
 		private CancellationTokenSource cts;
+		private static readonly JsonSerializerOptions jsonPresentationOptions = new JsonSerializerOptions() { WriteIndented = true };
 		
 		private bool disposedValue;
 
@@ -48,14 +51,79 @@ namespace ConnectionWebClient.ViewModels
 			DownloadProjectCommand = new AsyncRelayCommand(DownloadProjectAsync, () => this.ProjectInfo != null);
 			ApplyTemplateCommand = new AsyncRelayCommand(ApplyTemplateAsync, () => SelectedConnection != null);
 
-			GetRawResultsCommand = new AsyncRelayCommand(GetRawResultsAsync, () => SelectedConnection != null);
+			CalculationCommand = new AsyncRelayCommand(CalculateAsync, () => SelectedConnection != null);
+
+			GetSceneDataCommand = new AsyncRelayCommand(GetSceneDataAsync, () => SelectedConnection != null);
+
+			ShowClientUICommand = new RelayCommand(ShowClientUI, () => this.ProjectInfo != null);
 
 			Connections = new ObservableCollection<ConnectionViewModel>();
 			selectedConnection = null;
 		}
 
 
-		private async Task GetRawResultsAsync()
+		private void ShowClientUI()
+		{
+			_logger.LogInformation("ShowClientUI");
+
+			if (ProjectInfo == null)
+			{
+				return;
+			}
+
+			if (ConnectionController == null)
+			{
+				return;
+			}
+
+			try
+			{
+				// Open a URL in the default web browser
+				var connectionInfo = ConnectionController.GetConnectionInfo();
+				string url = string.Format("{0}/client-ui.html?clientId={1}&projectId={2}", ApiUri, connectionInfo.Item1, connectionInfo.Item2);
+				Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+			}
+			catch (Exception ex)
+			{
+				_logger.LogWarning("GetRawResultsAsync failed", ex);
+				OutputText = ex.Message;
+			}
+		}
+
+		private async Task GetSceneDataAsync()
+		{
+			_logger.LogInformation("PresentAsync");
+
+			if (ProjectInfo == null)
+			{
+				return;
+			}
+
+			if (ConnectionController == null)
+			{
+				return;
+			}
+
+			IsBusy = true;
+			try
+			{
+				var calculationResults = await ConnectionController.GetDataScene3DAsync(SelectedConnection!.Id, cts.Token);
+
+				OutputText = calculationResults;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogWarning("GetRawResultsAsync failed", ex);
+				OutputText = ex.Message;
+			}
+			finally
+			{
+				IsBusy = false;
+				RefreshCommands();
+			}
+		}
+
+		private async Task CalculateAsync()
 		{
 			_logger.LogInformation("ApplyTemplateAsync");
 
@@ -75,8 +143,10 @@ namespace ConnectionWebClient.ViewModels
 				var connectionIdList = new List<int>();
 				connectionIdList.Add(SelectedConnection!.Id);
 
-				var res = await ConnectionController.GetRawResultsAsync(connectionIdList, IdeaStatiCa.Plugin.Api.ConnectionRest.Model.Model_Connection.ConAnalysisTypeEnum.Stress_Strain, cts.Token);
-				OutputText = res;
+				var calculationResults = await ConnectionController.CalculateAsync(connectionIdList, ConAnalysisTypeEnum.Stress_Strain, cts.Token);
+
+				var calcResJson = JsonSerializer.Serialize(calculationResults, jsonPresentationOptions);
+				OutputText = calcResJson;
 			}
 			catch (Exception ex)
 			{
@@ -141,13 +211,18 @@ namespace ConnectionWebClient.ViewModels
 
 		public AsyncRelayCommand OpenProjectCommand { get; }
 
-		public AsyncRelayCommand GetRawResultsCommand { get; }
+		public AsyncRelayCommand CalculationCommand { get; }
 
 		public AsyncRelayCommand CloseProjectCommand { get; }
 
 		public AsyncRelayCommand DownloadProjectCommand { get; }
 
 		public AsyncRelayCommand ApplyTemplateCommand { get; }
+
+		public AsyncRelayCommand GetSceneDataCommand { get; }
+
+		public RelayCommand ShowClientUICommand { get; }
+		
 
 		private async Task OpenProjectAsync()
 		{
@@ -170,7 +245,12 @@ namespace ConnectionWebClient.ViewModels
 			{
 				ProjectInfo = await ConnectionController.OpenProjectAsync(openFileDialog.FileName, cts.Token);
 
-				OutputText =JsonTools.ToFormatedJson(ProjectInfo);
+				var projectInfoJson =JsonTools.ToFormatedJson(ProjectInfo);
+
+
+				var connectionInfo = ConnectionController.GetConnectionInfo();
+				OutputText = string.Format("ClientId = {0}\nProjectId = {1}\n\n{2}", connectionInfo.Item1, connectionInfo.Item2, projectInfoJson);
+				
 				Connections = new ObservableCollection<ConnectionViewModel>(ProjectInfo.Connections.Select(c => new ConnectionViewModel(c)));
 
 				if(Connections.Any())
@@ -218,6 +298,9 @@ namespace ConnectionWebClient.ViewModels
 					}
 
 					ConnectionController = await _connectionApiClientFactory.CreateConnectionApiClient(ApiUri);
+
+					var connectionInfo = ConnectionController.GetConnectionInfo();
+					OutputText = $"ClientId = {connectionInfo.Item1}, ProjectId = {connectionInfo.Item2}";
 				}
 			}
 			catch (Exception ex)
@@ -400,13 +483,17 @@ namespace ConnectionWebClient.ViewModels
 			this.CloseProjectCommand.NotifyCanExecuteChanged();
 			this.DownloadProjectCommand.NotifyCanExecuteChanged();
 			this.ApplyTemplateCommand.NotifyCanExecuteChanged();
-			this.GetRawResultsCommand.NotifyCanExecuteChanged();
+			this.CalculationCommand.NotifyCanExecuteChanged();
+			this.GetSceneDataCommand.NotifyCanExecuteChanged();
+			this.ShowClientUICommand.NotifyCanExecuteChanged();
 		}
 
 		private void RefreshConnectionChanged()
 		{
 			this.ApplyTemplateCommand.NotifyCanExecuteChanged();
-			this.GetRawResultsCommand.NotifyCanExecuteChanged();
+			this.CalculationCommand.NotifyCanExecuteChanged();
+			this.GetSceneDataCommand.NotifyCanExecuteChanged();
+			this.ShowClientUICommand.NotifyCanExecuteChanged();
 		}
 	}
 }

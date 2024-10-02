@@ -1,14 +1,10 @@
 ﻿using IdeaRS.OpenModel;
 using IdeaRS.OpenModel.Connection;
 using IdeaRS.OpenModel.Result;
+using IdeaStatiCa.Api.Common;
+using IdeaStatiCa.Api.Connection;
+using IdeaStatiCa.Api.Connection.Model;
 using IdeaStatiCa.Plugin;
-using IdeaStatiCa.Plugin.Api.Common;
-using IdeaStatiCa.Plugin.Api.ConnectionRest;
-using IdeaStatiCa.Plugin.Api.ConnectionRest.Model.Model_Connection;
-using IdeaStatiCa.Plugin.Api.ConnectionRest.Model.Model_Project;
-using IdeaStatiCa.Plugin.Api.ConnectionRest.Model.Model_Result;
-using IdeaStatiCa.Plugin.Api.ConnectionRest.Model.Model_Settings;
-using IdeaStatiCa.Plugin.Api.ConnectionRest.Model.Model_Template;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,6 +16,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using IdeaStatiCa.Api.Connection.Model.Material;
+using IdeaStatiCa.Api.Connection.Model.Connection;
+using Castle.MicroKernel.Registration;
 
 namespace IdeaStatiCa.ConnectionApi.Client
 {
@@ -37,7 +36,6 @@ namespace IdeaStatiCa.ConnectionApi.Client
 		private readonly int restApiProcessId;
 		private Guid activeProjectId;
 		private Guid ClientId;
-
 		private readonly IHttpClientWrapper _httpClient;
 		private readonly IPluginLogger _pluginLogger;
 
@@ -48,12 +46,17 @@ namespace IdeaStatiCa.ConnectionApi.Client
 			_pluginLogger = pluginLogger ?? new NullLogger();
 		}
 
+		public Tuple<string, string> GetConnectionInfo()
+		{
+			return new Tuple<string, string>(ClientId.ToString(), activeProjectId.ToString());
+		}
+
 		public async Task InitializeClientIdAsync(CancellationToken cancellationToken)
 		{
 			if (ClientId == Guid.Empty)
 			{
 				LogMethodCallToDebug();
-				var clientIdResponse = await _httpClient.GetAsync<string>($"api/{ApiVersion}/{ConRestApiConstants.ConnectClient}", cancellationToken, "text/plain");
+				var clientIdResponse = await _httpClient.GetAsync<string>($"api/{ApiVersion}/{ConRestApiConstants.Client}/{ConRestApiConstants.ConnectClient}", cancellationToken, "text/plain");
 				ClientId = Guid.Parse(clientIdResponse);
 				_httpClient.AddRequestHeader("ClientId", ClientId.ToString());
 			}
@@ -63,14 +66,26 @@ namespace IdeaStatiCa.ConnectionApi.Client
 		public async Task<ConProject> OpenProjectAsync(string ideaConProject, CancellationToken cancellationToken = default)
 		{
 			LogMethodCallToDebug(ClientId, message: $"path = '{ideaConProject}'");
-			byte[] fileData = File.ReadAllBytes(ideaConProject);
-			var streamContent = new StreamContent(new MemoryStream(fileData));
-			streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+			using (var formData = new MultipartFormDataContent())
+			{
+				// Add file content
+				using (var fileStream = new FileStream(ideaConProject, FileMode.Open, FileAccess.Read))
+				{
+					var streamContent = new StreamContent(fileStream);
+					streamContent.Headers.ContentType = new MediaTypeHeaderValue("multipart/form-data");
 
-			var response = await _httpClient.PostAsyncStream<ConProject>($"api/{ApiVersion}/{ConRestApiConstants.Projects}/open", streamContent, cancellationToken);
-			activeProjectId = response.ProjectId;
-			LogMethodCallToDebug(ClientId, activeProjectId);
-			return response;
+					// Add the file stream content to the form data, with the form field name "ideaConFile"
+					formData.Add(streamContent, "ideaConFile", Path.GetFileName(ideaConProject));
+
+					// Send the POST request to the API
+					// Send the request
+					var response = await _httpClient.PostAsyncForm<ConProject>($"api/{ApiVersion}/{ConRestApiConstants.Projects}/open", formData, cancellationToken, false);
+					activeProjectId = response.ProjectId;
+					LogMethodCallToDebug(ClientId, activeProjectId);
+
+					return response;
+				}
+			}			
 		}
 
 		public async Task<ConProject> CreateProjectFromIomFileAsync(string iomXmlFileName, string iomResXmlFileName, ConIomImportOptions options, CancellationToken cancellationToken = default)
@@ -116,7 +131,7 @@ namespace IdeaStatiCa.ConnectionApi.Client
 				}
 			}
 
-			var response = await _httpClient.PostAsync<ConProject>($"api/{ApiVersion}/{ConRestApiConstants.Projects}/import-iom{query.ToString()}", model, cancellationToken, "application/xml");
+			var response = await _httpClient.PostAsync<ConProject>($"api/{ApiVersion}/{ConRestApiConstants.Projects}/import-iom{query.ToString()}", model, cancellationToken);
 			activeProjectId = response.ProjectId;
 
 			LogMethodCallToDebug(ClientId, activeProjectId);
@@ -145,10 +160,10 @@ namespace IdeaStatiCa.ConnectionApi.Client
 			}
 		}
 
-		public async Task<ConProjectData> GetProjectDataAsync(CancellationToken cancellationToken = default)
+		public async Task<ConProject> GetProjectAsync(CancellationToken cancellationToken = default)
 		{
 			LogMethodCallToDebug(ClientId, activeProjectId);
-			var response = await _httpClient.GetAsync<ConProjectData>($"{GetProjectRoute()}/project-data", cancellationToken);
+			var response = await _httpClient.GetAsync<ConProject>($"{GetProjectRoute()}", cancellationToken);
 			return response;
 		}
 
@@ -185,7 +200,7 @@ namespace IdeaStatiCa.ConnectionApi.Client
 		{
 			LogMethodCallToDebug(ClientId, activeProjectId);
 			var calculateParam = new ConCalculationParameter() { AnalysisType = analysisType, ConnectionIds = conToCalculateIds };
-			var response = await _httpClient.PostAsync<List<ConResultSummary>>($"{GetProjectRoute()}/calculate", calculateParam, cancellationToken, "application/json");
+			var response = await _httpClient.PostAsync<List<ConResultSummary>>($"{GetProjectRoute()}/connections/calculate", calculateParam, cancellationToken, "application/json");
 			return response;
 		}
 
@@ -194,7 +209,7 @@ namespace IdeaStatiCa.ConnectionApi.Client
 		{
 			LogMethodCallToDebug(ClientId, activeProjectId, message: $"Connections {string.Join(",", conToCalculateIds.Select(x => x))}");
 			var calculateParam = new ConCalculationParameter() { ConnectionIds = conToCalculateIds };
-			var response = await _httpClient.PostAsync<List<ConnectionCheckRes>>($"{GetProjectRoute()}/results", calculateParam, cancellationToken, "application/json");
+			var response = await _httpClient.PostAsync<List<ConnectionCheckRes>>($"{GetProjectRoute()}/connections/results", calculateParam, cancellationToken, "application/json");
 			return response;
 		}
 
@@ -202,7 +217,7 @@ namespace IdeaStatiCa.ConnectionApi.Client
 		{
 			LogMethodCallToDebug(ClientId, activeProjectId);
 			var calculateParam = new ConCalculationParameter() { AnalysisType = analysisType, ConnectionIds = conToCalculateIds };
-			var response = await _httpClient.PostAsync<string>($"{ConRestApiConstants.Projects}/{{projectId}}/rawresults-text", calculateParam, cancellationToken, "text/plain");
+			var response = await _httpClient.PostAsync<string>($"{ConRestApiConstants.Projects}/{{projectId}}/connections/rawresults-text", calculateParam, cancellationToken, "text/plain");
 			return response;
 		}
 
@@ -210,7 +225,7 @@ namespace IdeaStatiCa.ConnectionApi.Client
 		{
 			LogMethodCallToDebug(ClientId, activeProjectId, connectionId);
 			ConTemplateMappingGetParam getTempMappingParam = new ConTemplateMappingGetParam() { Template = templateXml };
-			var response = await _httpClient.PostAsync<TemplateConversions>($"{GetConnectionRoute(connectionId)}/apply-mapping", getTempMappingParam, cancellationToken);
+			var response = await _httpClient.PostAsync<TemplateConversions>($"{GetConnectionRoute(connectionId)}/get-default-mapping", getTempMappingParam, cancellationToken);
 			return response;
 		}
 
@@ -303,31 +318,31 @@ namespace IdeaStatiCa.ConnectionApi.Client
 		public async Task<bool> UpdateProjectFromIomContainerAsync(OpenModelContainer model, CancellationToken cancellationToken = default)
 		{
 			LogMethodCallToDebug();
-			var response = await _httpClient.PostAsync<bool>($"{GetProjectRoute()}/update-iom", model, cancellationToken, "application/xml");
+			var response = await _httpClient.PostAsync<bool>($"{GetProjectRoute()}/update-iom", model, cancellationToken);
 			return response;
 		}
 
 
 		private void LogMethodCallToDebug(
-			Guid? clientId = null, 
-			Guid? projectId = null, 
-			int? connectionId = null, 
+			Guid? clientId = null,
+			Guid? projectId = null,
+			int? connectionId = null,
 			string message = "",
 			[CallerMemberName] string methodName = "")
 		{
 			var sb = new StringBuilder();
 			sb.Append($"{GetType().Name}.{methodName}");
-			if(clientId != null) 
+			if (clientId != null)
 			{
-				sb.Append($" clientId = {clientId}"); 
+				sb.Append($" clientId = {clientId}");
 			}
-			if (projectId != null) 
-			{ 
+			if (projectId != null)
+			{
 				sb.Append($" projectId = {projectId}");
 			}
 			if (connectionId != null)
 			{
-				sb.Append($" connectionId = {connectionId}"); 
+				sb.Append($" connectionId = {connectionId}");
 			}
 			if (!string.IsNullOrWhiteSpace(message))
 			{
@@ -354,7 +369,7 @@ namespace IdeaStatiCa.ConnectionApi.Client
 		}
 
 		/// <inheritdoc cref="IConnectionApiController.GetLoadEffectAsync(int, bool, CancellationToken)(int, CancellationToken)" >
-		public async Task<ConLoadEffect> GetLoadEffectAsync(int connectionId, int loadEffectId,  bool isPercentage = false, CancellationToken cancellationToken = default)
+		public async Task<ConLoadEffect> GetLoadEffectAsync(int connectionId, int loadEffectId, bool isPercentage = false, CancellationToken cancellationToken = default)
 		{
 			LogMethodCallToDebug(ClientId, activeProjectId, connectionId);
 			var result = await _httpClient.GetAsync<ConLoadEffect>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.LoadEffect}/{loadEffectId}?IsPercentage={isPercentage}", cancellationToken);
@@ -362,7 +377,7 @@ namespace IdeaStatiCa.ConnectionApi.Client
 		}
 
 		/// <inheritdoc cref="IConnectionApiController.AddLoadEffectAsync(int, ConLoadEffect, CancellationToken)" >
-		public async Task<ConLoadEffect> AddLoadEffectAsync(int connectionId, ConLoadEffect loadEffect,CancellationToken cancellationToken = default)
+		public async Task<ConLoadEffect> AddLoadEffectAsync(int connectionId, ConLoadEffect loadEffect, CancellationToken cancellationToken = default)
 		{
 			LogMethodCallToDebug(ClientId, activeProjectId, connectionId, message: $"Adding load effect = {loadEffect.Id}");
 			var result = await _httpClient.PostAsync<ConLoadEffect>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.LoadEffect}", loadEffect, cancellationToken);
@@ -391,67 +406,107 @@ namespace IdeaStatiCa.ConnectionApi.Client
 			return response;
 		}
 
-		/// <inheritdoc/>eritdoc cref="IConnectionApiController.UpdateConnectionSetupAsync(ConnectionSetup, CancellationToken)"/>
+		/// <inheritdoc cref="IConnectionApiController.UpdateConnectionSetupAsync(ConnectionSetup, CancellationToken)"/>
 		public async Task<ConnectionSetup> UpdateConnectionSetupAsync(ConnectionSetup connectionSetup, CancellationToken cancellationToken)
 		{
 			LogMethodCallToDebug(ClientId, activeProjectId);
 			var response = await _httpClient.PutAsync<ConnectionSetup>($"{GetProjectRoute()}/connection-setup", connectionSetup, cancellationToken);
 			return response;
 		}
-		
-		/// <inheritdoc cref="IConnectionApiController.GetMaterialsAsync(int, string)(int, int)" >
-		public async Task<List<ProjMaterial>> GetMaterialsAsync(int connectionId, string type = "All")
+
+		/// <inheritdoc cref="IConnectionApiController.GetMaterialsAsync(string)" >
+		public async Task<List<object>> GetMaterialsAsync(string type = "all")
 		{
-			LogMethodCallToDebug(ClientId, activeProjectId, connectionId, message: $"Get material type {type}");
-			return await _httpClient.GetAsync<List<ProjMaterial>>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.Materials}?type={type}", CancellationToken.None);
+			LogMethodCallToDebug(ClientId, activeProjectId, message: $"Get material type {type}");
+			var materialType = type == "all" ? "" : $"/{type}";
+			return await _httpClient.GetAsync<List<object>>($"{GetProjectRoute()}/{ConRestApiConstants.Materials}{materialType}", CancellationToken.None);
 		}
 
-		/// <inheritdoc cref="IConnectionApiController.GetCrossSectionsAsync(int)" >
-		public async Task<List<ProjCrossSection>> GetCrossSectionsAsync(int connectionId)
+		/// <inheritdoc cref="IConnectionApiController.GetCrossSectionsAsync()" >
+		public async Task<List<object>> GetCrossSectionsAsync()
 		{
-			LogMethodCallToDebug(ClientId, activeProjectId, connectionId, message: $"Get cross sections");
-			return await _httpClient.GetAsync<List<ProjCrossSection>>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.Materials}/cross-sections", CancellationToken.None);
-		}
-		
-		public async Task<List<ProjPin>> GetPinsAsync(int connectionId)
-		{
-			LogMethodCallToDebug(ClientId, activeProjectId, connectionId, message: $"Get pins");
-			return await _httpClient.GetAsync<List<ProjPin>>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.Materials}/pins", CancellationToken.None);
+			LogMethodCallToDebug(ClientId, activeProjectId, message: $"Get cross sections");
+			return await _httpClient.GetAsync<List<object>>($"{GetProjectRoute()}/{ConRestApiConstants.Materials}/cross-sections", CancellationToken.None);
 		}
 
-		/// <inheritdoc cref="IConnectionApiController.GetBoltAssembliesAsync(int)" >
-		public async Task<List<ProjBoltAssembly>> GetBoltAssembliesAsync(int connectionId)
+		/// <inheritdoc cref="IConnectionApiController.GetBoltAssembliesAsync()" >
+		public async Task<List<object>> GetBoltAssembliesAsync()
 		{
-			LogMethodCallToDebug(ClientId, activeProjectId, connectionId, message: $"Get pins");
-			return await _httpClient.GetAsync<List<ProjBoltAssembly>>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.Materials}/bolt-assemblies", CancellationToken.None);
+			LogMethodCallToDebug(ClientId, activeProjectId, message: $"Get pins");
+			return await _httpClient.GetAsync<List<object>>($"{GetProjectRoute()}/{ConRestApiConstants.Materials}/bolt-assemblies", CancellationToken.None);
 		}
 
-		/// <inheritdoc cref="IConnectionApiController.AddPinAsync(int, ProjPin)" >
-		public async Task<ProjPin> AddPinAsync(int connectionId, ProjPin newPin)
+		/// <inheritdoc cref="IConnectionApiController.AddMaterialAsync(ConMprlElement, string)" >
+		public async Task<ConMprlElement> AddMaterialAsync(ConMprlElement newMaterial, string materialType)
 		{
-			LogMethodCallToDebug(ClientId, activeProjectId, connectionId, message: $"Add pin {newPin.Name}");
-			return await _httpClient.PostAsync<ProjPin>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.Materials}/pins", newPin, CancellationToken.None);
+			LogMethodCallToDebug(ClientId, activeProjectId, message: $"Add material - {newMaterial.MprlName}");
+			return await _httpClient.PostAsync<ConMprlElement>($"{GetProjectRoute()}/{ConRestApiConstants.Materials}/{materialType}", newMaterial, CancellationToken.None);
 		}
 
-		/// <inheritdoc cref="IConnectionApiController.AddMaterialAsync(int, ProjMaterial)" >
-		public async Task<ProjMaterial> AddMaterialAsync(int connectionId, ProjMaterial newMaterial)
+		/// <inheritdoc cref="IConnectionApiController.AddCrossSectionAsync(ConMprlCrossSection)" >
+		public async Task<ConMprlCrossSection> AddCrossSectionAsync(ConMprlCrossSection newCrossSection)
 		{
-			LogMethodCallToDebug(ClientId, activeProjectId, connectionId, message: $"Add material {newMaterial.MaterialType} - {newMaterial.Name}");
-			return await _httpClient.PostAsync<ProjMaterial>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.Materials}", newMaterial, CancellationToken.None);
+			LogMethodCallToDebug(ClientId, activeProjectId, message: $"Add cross section {newCrossSection.MprlName}");
+			return await _httpClient.PostAsync<ConMprlCrossSection>($"{GetProjectRoute()}/{ConRestApiConstants.Materials}/cross-sections", newCrossSection, CancellationToken.None);
 		}
 
-		/// <inheritdoc cref="IConnectionApiController.AddCrossSectionAsync(int, ProjCrossSection)" >
-		public async Task<ProjCrossSection> AddCrossSectionAsync(int connectionId, ProjCrossSection newCrossSection)
+		/// <inheritdoc cref="IConnectionApiController.AddBoltAssemblyAsync(ConMprlElement)"/>
+		public async Task<ConMprlElement> AddBoltAssemblyAsync(ConMprlElement newBoltAssembly)
 		{
-			LogMethodCallToDebug(ClientId, activeProjectId, connectionId, message: $"Add cross section {newCrossSection.Name}");
-			return await _httpClient.PostAsync<ProjCrossSection>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.Materials}/cross-sections", newCrossSection, CancellationToken.None);
+			LogMethodCallToDebug(ClientId, activeProjectId, message: $"Add bolt assembly {newBoltAssembly.MprlName}");
+			return await _httpClient.PostAsync<ConMprlElement>($"{GetProjectRoute()}/{ConRestApiConstants.Materials}/bolt-assemblies", newBoltAssembly, CancellationToken.None);
 		}
 
-		/// <inheritdoc cref="IConnectionApiController.AddBoltAssemblyAsync(int, ProjBoltAssembly)"/>
-		public async Task<ProjBoltAssembly> AddBoltAssemblyAsync(int connectionId, ProjBoltAssembly newBoltAssembly)
+		/// <inheritdoc cref="IConnectionApiController.GetParametersAsync(int)"/>
+		public async Task<List<IdeaParameter>> GetParametersAsync(int connectionId, bool includeHidden)
 		{
-			LogMethodCallToDebug(ClientId, activeProjectId, connectionId, message: $"Add bolt assembly {newBoltAssembly.Name}");
-			return await _httpClient.PostAsync<ProjBoltAssembly>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.Materials}/bolt-assemblies", newBoltAssembly, CancellationToken.None);
+			LogMethodCallToDebug(ClientId, activeProjectId, connectionId);
+			return await _httpClient.GetAsync<List<IdeaParameter>>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.Parameters}?includeHidden={includeHidden.ToString()}", CancellationToken.None);
+		}
+
+		/// <inheritdoc cref="IConnectionApiController.GetVersionAsync"/>
+		public async Task<string> GetVersionAsync()
+		{
+			return await _httpClient.GetAsync<string>($"api/{ApiVersion}/version", CancellationToken.None);
+		}
+
+		public async Task<string> GetDataScene3DAsync(int connectionId, CancellationToken cancellationToken = default)
+		{
+			LogMethodCallToDebug(ClientId, activeProjectId);
+			var response = await _httpClient.GetAsync<string>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.Presentation}", cancellationToken, "text/plain");
+			return response;
+		}
+
+		/// <inheritdoc cref="IConnectionApiController.GetConnectionTemplateAsync(int, CancellationToken)"/>
+		public async Task<string> GetConnectionTemplateAsync(int connectionId, CancellationToken cancellationToken = default)
+		{
+			LogMethodCallToDebug(ClientId, activeProjectId);
+			var response = await _httpClient.GetAsync<string>($"{GetConnectionRoute(connectionId)}/get-template", cancellationToken, "text/plain");
+			return response;
+		}
+
+		/// <inheritdoc cref="IConnectionApiController.SetBearingMemberAsync(int, int, CancellationToken)"/>
+		public async Task<ConMember> SetBearingMemberAsync(int connectionId, int memberId, CancellationToken cancellationToken)
+		{
+			LogMethodCallToDebug(ClientId, activeProjectId);
+			var response = await _httpClient.PutAsync<ConMember>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.Members}/{memberId}/set-bearing-member", new { }, cancellationToken);
+			return response;
+		}
+
+		/// <inheritdoc cref="IConnectionApiController.GetLoadEffectLoadSettingsAsync(int, CancellationToken)"/>
+		public async Task<ConLoadSettings> GetLoadEffectLoadSettingsAsync(int connectionId, CancellationToken cancellationToken = default)
+		{
+			LogMethodCallToDebug(ClientId, activeProjectId);
+			var response = await _httpClient.GetAsync<ConLoadSettings>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.LoadEffect}/get-load-settings", cancellationToken);
+			return response;
+		}
+
+		/// <inheritdoc cref="IConnectionApiController.SetLoadEffectLoadSettingsAsync(int, ConLoadSettings, CancellationToken)"/>
+		public async Task<ConLoadSettings> SetLoadEffectLoadSettingsAsync(int connectionId, ConLoadSettings settings, CancellationToken cancellationToken = default)
+		{
+			LogMethodCallToDebug(ClientId, activeProjectId);
+			var response = await _httpClient.PostAsync<ConLoadSettings>($"{GetConnectionRoute(connectionId)}/{ConRestApiConstants.LoadEffect}/set-load-settings", settings, cancellationToken);
+			return response;
 		}
 
 		private string GetProjectRoute()
@@ -479,7 +534,7 @@ namespace IdeaStatiCa.ConnectionApi.Client
 			{
 				if (disposing)
 				{
-					if(activeProjectId != Guid.Empty)
+					if (activeProjectId != Guid.Empty)
 					{
 						try
 						{
@@ -510,7 +565,7 @@ namespace IdeaStatiCa.ConnectionApi.Client
 
 								_pluginLogger.LogInformation($"Cleaning the API process with ID {restApiProcessId}");
 
-								// TODO - I suppose Kill process does't release resources properly (temp files on a disk)
+								// TODO - I suppose Kill process doesn't release resources properly (temp files on a disk)
 								restApiProcess.Kill();
 							}
 						}
