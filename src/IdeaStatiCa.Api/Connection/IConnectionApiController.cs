@@ -161,11 +161,10 @@ namespace IdeaStatiCa.Api.Connection
 		/// Update connection's member values
 		/// </summary>
 		/// <param name="connectionId"></param>
-		/// <param name="memberId"></param>
 		/// <param name="member"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		Task<ConMember> UpdateMemberAsync(int connectionId, int memberId, ConMember member, CancellationToken cancellationToken = default);
+		Task<ConMember> UpdateMemberAsync(int connectionId, ConMember member, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get production cost
@@ -258,21 +257,21 @@ namespace IdeaStatiCa.Api.Connection
 		/// <param name="newMaterial"></param>
 		/// <param name="materialType"></param>
 		/// <returns></returns>
-		Task<ConMprlElement> AddMaterialAsync(ConMprlElement newMaterial, string materialType);
+		Task<object> AddMaterialAsync(ConMprlElement newMaterial, string materialType);
 
 		/// <summary>
 		/// Add cross section to project data
 		/// </summary>
 		/// <param name="newCrossSection"></param>
 		/// <returns></returns>
-		Task<ConMprlCrossSection> AddCrossSectionAsync(ConMprlCrossSection newCrossSection);
+		Task<object> AddCrossSectionAsync(ConMprlCrossSection newCrossSection);
 
 		/// <summary>
 		/// Add bolt assembly to project data
 		/// </summary>
 		/// <param name="newBa"></param>
 		/// <returns></returns>
-		Task<ConMprlElement> AddBoltAssemblyAsync(ConMprlElement newBa);
+		Task<object> AddBoltAssemblyAsync(ConMprlElement newBa);
 
 		/// <summary>
 		/// Get parameters

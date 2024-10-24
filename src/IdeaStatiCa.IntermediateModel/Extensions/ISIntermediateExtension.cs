@@ -142,6 +142,24 @@ namespace IdeaStatiCa.IntermediateModel.Extensions
 		}
 
 		/// <summary>
+		/// Try Get Element Value
+		/// </summary>
+		/// <param name="intermediateItem"></param>
+		/// <param name="property"></param>
+		/// <returns></returns>
+		public static string TryGetElementValue(this ISIntermediate intermediateItem, string property)
+		{
+			try
+			{
+				return intermediateItem.GetElementValue(property);
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
+		/// <summary>
 		/// Take (Get and Remove) Element Property
 		/// </summary>
 		/// <param name="intermediateItem"></param>
@@ -165,6 +183,23 @@ namespace IdeaStatiCa.IntermediateModel.Extensions
 			}
 		}
 
+		/// <summary>
+		/// Try Take (Get and Remove) Element Property
+		/// </summary>
+		/// <param name="intermediateItem"></param>
+		/// <param name="property"></param>
+		/// <returns></returns>
+		public static ISIntermediate TryTakeElementProperty(this ISIntermediate intermediateItem, string property)
+		{
+			try
+			{
+				return TakeElementProperty(intermediateItem, property);
+			}
+			catch
+			{
+				return null;
+			}
+		}
 
 
 		/// <summary>
@@ -189,7 +224,8 @@ namespace IdeaStatiCa.IntermediateModel.Extensions
 				case SAttribute sAttribute:
 					sAttribute.AddElementProperty(property);
 					break;
-				default: throw new InvalidOperationException($"Unsupported type of intermediateItem {intermediateItem.GetType()}");
+				default:
+					throw new InvalidOperationException($"Unsupported type of intermediateItem {intermediateItem.GetType()}");
 			}
 		}
 
@@ -252,6 +288,27 @@ namespace IdeaStatiCa.IntermediateModel.Extensions
 		}
 
 		/// <summary>
+		/// Create Element Property
+		/// </summary>
+		/// <param name="intermediateItem"></param>
+		/// <param name="name"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		/// <exception cref="InvalidOperationException"></exception>
+		public static void CreateElementProperty(this ISIntermediate intermediateItem, string name, string value)
+		{
+			if (intermediateItem is SObject sObject)
+			{
+				sObject.CreateElementProperty(name)
+					.ChangeElementValue(value);
+			}
+			else
+			{
+				throw new InvalidOperationException($"Unknown type of intermediateItem {intermediateItem.GetType()}");
+			}
+		}
+
+		/// <summary>
 		/// Create List Property
 		/// </summary>
 		/// <param name="intermediateItem"></param>
@@ -286,7 +343,8 @@ namespace IdeaStatiCa.IntermediateModel.Extensions
 				case SList sList:
 					sList.RemoveElementProperty(property);
 					break;
-				default: throw new InvalidOperationException($"Unknown type of intermediateItem {intermediateItem.GetType()}");
+				default:
+					throw new InvalidOperationException($"Unknown type of intermediateItem {intermediateItem.GetType()}");
 			}
 		}
 
@@ -306,8 +364,26 @@ namespace IdeaStatiCa.IntermediateModel.Extensions
 				case SList sList:
 					sList.RemoveElementProperty(property);
 					break;
-				default: throw new InvalidOperationException($"Unknown type of intermediateItem {intermediateItem.GetType()}");
+				default:
+					throw new InvalidOperationException($"Unknown type of intermediateItem {intermediateItem.GetType()}");
 			}
+		}
+
+		public static bool IsEmpty(this ISIntermediate intermediateItem)
+		{
+			if (intermediateItem is null)
+			{
+				return true;
+			}
+
+			return intermediateItem switch
+			{
+				SObject sObject => sObject.Properties.Count == 0,
+				SList sList => sList.Count == 0,
+				SPrimitive => false,
+				SAttribute => false,
+				_ => throw new InvalidOperationException($"Unknown type of intermediateItem {intermediateItem.GetType()}"),
+			};
 		}
 	}
 }
