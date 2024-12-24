@@ -5,20 +5,23 @@ using System.Threading.Tasks;
 
 namespace IdeaStatiCa.ConnectionApi
 {
+	/// <summary>
+	/// Connection API client. A simplified API client which combines all REST API endpoints into a single client for use in .NET applications.
+	/// </summary>
 	public class ConnectionApiClient : IConnectionApiClient
 	{
 		private bool disposedValue;
 		
 		/// <summary>
-		/// 
+		/// Base uri path of the client.
 		/// </summary>
 		public Uri BasePath { get; private set; }
 
 		/// <inheritdoc cref="IConnectionApiClient.ClientId"/>/>
 		public string ClientId { get; private set; }
 
-		/// <inheritdoc cref="IConnectionApiClient.ProjectId"/>/>
-		public Guid ProjectId
+		/// <inheritdoc cref="IConnectionApiClient.ActiveProjectId"/>/>
+		public Guid ActiveProjectId
 		{
 			get => this.Project.ProjectId;
 		}
@@ -36,20 +39,28 @@ namespace IdeaStatiCa.ConnectionApi
 		public IExportApiExtAsync Export { get; private set; }
 		/// <inheritdoc cref="IConnectionApiClient.LoadEffect"/>
 		public ILoadEffectApiAsync LoadEffect { get; private set; }
+		
 		/// <inheritdoc cref="IConnectionApiClient.Material"/>
 		public IMaterialApiAsync Material { get; private set; }
+		
 		/// <inheritdoc cref="IConnectionApiClient.Member"/>
 		public IMemberApiAsync Member { get; private set; }
+		
 		/// <inheritdoc cref="IConnectionApiClient.Operation"/>
 		public IOperationApiAsync Operation { get; private set; }
+		
 		/// <inheritdoc cref="IConnectionApiClient.Parameter"/>
 		public IParameterApiAsync Parameter { get; private set; }
+		
 		/// <inheritdoc cref="IConnectionApiClient.Presentation"/>
 		public IPresentationApiAsync Presentation { get; private set; }
+		
 		/// <inheritdoc cref="IConnectionApiClient.Project"/>
 		public IProjectApiExtAsync Project { get; private set; }
+		
 		/// <inheritdoc cref="IConnectionApiClient.Report"/>
 		public IReportApiExtAsync Report { get; private set; }
+		
 		/// <inheritdoc cref="IConnectionApiClient.Template"/>
 		public ITemplateApiExtAsync Template { get; private set; }
 
@@ -79,9 +90,9 @@ namespace IdeaStatiCa.ConnectionApi
 
 		private async Task CloseAsync()
 		{
-			if(Project != null && ProjectId != Guid.Empty)
+			if(Project != null && ActiveProjectId != Guid.Empty)
 			{
-				await Project.CloseProjectAsync(ProjectId);
+				await Project.CloseProjectAsync(ActiveProjectId);
 			}
 
 			this.Calculation = null;
@@ -114,18 +125,14 @@ namespace IdeaStatiCa.ConnectionApi
 			this.Connection = new IdeaStatiCa.ConnectionApi.Api.ConnectionApi(clientApi.Client, clientApi.AsynchronousClient, configuration);
 			this.Export = new ExportApiExt(clientApi.Client, clientApi.AsynchronousClient, configuration);
 			this.LoadEffect = new LoadEffectApi(clientApi.Client, clientApi.AsynchronousClient, configuration);
-
-			var iomClient = new IdeaStatiCa.ConnectionApi.Client.ApiClient(configuration.BasePath);
-			iomClient.SerializerSettings = IdeaJsonSerializerSetting.GetJsonSettingIdea();
-
-			this.Material = new MaterialApi(iomClient, iomClient, configuration);
+			this.Material = new MaterialApi(clientApi.Client, clientApi.AsynchronousClient, configuration);
 			this.Member = new MemberApi(clientApi.Client, clientApi.AsynchronousClient, configuration);
 			this.Operation = new OperationApi(clientApi.Client, clientApi.AsynchronousClient, configuration);
 			this.Parameter = new ParameterApi(clientApi.Client, clientApi.AsynchronousClient, configuration);
 			this.Presentation = new PresentationApi(clientApi.Client, clientApi.AsynchronousClient, configuration);
 			this.Project = new ProjectApiExt(this, clientApi.Client, clientApi.AsynchronousClient, configuration);
 			this.Report = new ReportApiExt(clientApi.Client, clientApi.AsynchronousClient, configuration);
-			this.Template = new TemplateApiExt(iomClient, iomClient, configuration);
+			this.Template = new TemplateApiExt(clientApi.Client, clientApi.AsynchronousClient, configuration);
 
 			this.ClientApi = clientApi;
 			this.ClientId = clientId;

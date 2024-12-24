@@ -10,12 +10,16 @@
 
 	<ItemGroup>
 		
-		<PackageReference Include="IdeaStatiCa.SAF2IOM" Version="24.0.0.4380" />
+		<PackageReference Include="IdeaStatiCa.SAF2IOM" VersionOverride="24.1.2.1513" />
+		<PackageReference Include="System.Private.Uri" />
+		<PackageReference Include="System.Drawing.Common" />
+		<PackageReference Include="System.Net.Http" />
+		<PackageReference Include="System.Text.RegularExpressions" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(Configuration.Contains('NuGet'))">
-		<PackageReference Include="IdeaStatiCa.PluginLogger" Version="24.0.0.4380" />
-		<PackageReference Include="IdeaStatiCa.Public" Version="24.0.0.4380" />
+		<PackageReference Include="IdeaStatiCa.PluginLogger" VersionOverride="24.1.2.1513" />
+		<PackageReference Include="IdeaStatiCa.Public" VersionOverride="24.1.2.1513" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">

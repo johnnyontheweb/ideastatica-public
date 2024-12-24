@@ -1,11 +1,5 @@
 ﻿using IdeaStatiCa.ConnectionApi;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CodeSamples
 {
@@ -22,7 +16,7 @@ namespace CodeSamples
 		{
 			return typeof(ClientExamples)
 				.GetMethods(BindingFlags.Public | BindingFlags.Static)
-				.Where(m => m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType == typeof(ConnectionApiClient))
+				.Where(m => m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType == typeof(IConnectionApiClient))
 				.Where(m => typeof(Task).IsAssignableFrom(m.ReturnType)) // Ensure it returns a Task
 				.ToArray();
 		}

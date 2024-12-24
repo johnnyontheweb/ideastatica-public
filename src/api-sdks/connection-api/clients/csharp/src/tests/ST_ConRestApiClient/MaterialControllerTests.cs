@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using IdeaRS.OpenModel.CrossSection;
 using IdeaRS.OpenModel.Material;
+using IdeaStatiCa.Api.Connection.Model.Material;
 
 namespace ST_ConnectionRestApi
 {
@@ -23,7 +24,7 @@ namespace ST_ConnectionRestApi
 			//	ConnectionApiClient = await ApiFactory.CreateConnectionApiClient(ApiUri);
 			//}
 
-			ConnectionApiClient = await ApiFactory.CreateConnectionApiClient();
+			ConnectionApiClient = await ApiFactory.CreateApiClient();
 
 			string connProjectFilePath = Path.Combine(ProjectPath, "Parametric.ideaCon");
 			this.Project = await ConnectionApiClient.Project.OpenProjectAsync(connProjectFilePath);
@@ -93,13 +94,13 @@ namespace ST_ConnectionRestApi
 		{
 			var css = await ConnectionApiClient!.Material!.GetCrossSectionsAsync(ActiveProjectId);
 
-			var newCss = new IdeaStatiCa.ConnectionApi.Model.ConMprlCrossSection
+			var newCss = new ConMprlCrossSection
 			{
 				MprlName = "IPE240",
 				MaterialName = "S 450"
 			};
 
-			var added = await ConnectionApiClient!.Material!.AddCrossSectionAsync(ActiveProjectId, newCss);
+			await ConnectionApiClient!.Material!.AddCrossSectionAsync(ActiveProjectId, newCss);
 
 			var updated = await ConnectionApiClient!.Material!.GetCrossSectionsAsync(ActiveProjectId);
 			updated.Count().Should().Be(css.Count() + 1);
@@ -127,7 +128,7 @@ namespace ST_ConnectionRestApi
 		{
 			var boltAssemblies = await ConnectionApiClient!.Material!.GetBoltAssembliesAsync(ActiveProjectId);
 
-			var newBa = new IdeaStatiCa.ConnectionApi.Model.ConMprlElement
+			var newBa = new ConMprlElement
 			{
 				MprlName = "M20 10.9"
 			};
@@ -158,12 +159,12 @@ namespace ST_ConnectionRestApi
 		{
 			var materials = await ConnectionApiClient!.Material!.GetAllMaterialsAsync(ActiveProjectId);
 
-			var newMaterialSteel = new IdeaStatiCa.ConnectionApi.Model.ConMprlElement
+			var newMaterialSteel = new ConMprlElement
 			{
 				MprlName = "S 450",
 			};
 
-			var result = await ConnectionApiClient!.Material!.AddMaterialSteelAsync(ActiveProjectId, newMaterialSteel);
+			await ConnectionApiClient!.Material!.AddMaterialSteelAsync(ActiveProjectId, newMaterialSteel);
 
 			var added = (await ConnectionApiClient!.Material!.GetAllMaterialsAsync(ActiveProjectId)).Last();
 

@@ -6,9 +6,9 @@ using IdeaStatiCa.RcsClient.Client;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-
 namespace IdeaStatiCa.RcsClient.Factory
 {
 	public class RcsClientFactory : IRcsClientFactory
@@ -22,6 +22,10 @@ namespace IdeaStatiCa.RcsClient.Factory
 
 		public Action<string, int> StreamingLog { get; set; } = null;
 		public Action<string> HeartbeatLog { get; set; } = null;
+
+		// Empty string for Rcs.Rest.Obsolete
+		protected string API_VERSION_V1 = "1.0";
+		protected string Application_name = "IdeaStatiCa.RcsRestApi.exe";
 
 		public RcsClientFactory(string isSetupDir, IPluginLogger pluginLogger = null, IHttpClientWrapper httpClientWrapper = null)
 		{
@@ -37,11 +41,11 @@ namespace IdeaStatiCa.RcsClient.Factory
 			var (url, processId) = await RunRcsRestApiService();
 			pluginLogger?.LogInformation($"Service is running on {url} with process ID {processId}");
 			var wrapper = httpClientWrapper ?? new HttpClientWrapper(pluginLogger, url);
-			if(StreamingLog != null)
+			if (StreamingLog != null)
 			{
 				wrapper.ProgressLogAction = StreamingLog;
 			}
-			if(HeartbeatLog != null)
+			if (HeartbeatLog != null)
 			{
 				wrapper.HeartBeatLogAction = HeartbeatLog;
 			}
@@ -66,19 +70,19 @@ namespace IdeaStatiCa.RcsClient.Factory
 
 		private async Task<(string, int)> RunRcsRestApiService()
 		{
-			return await Task.Run<(string, int)>(() =>
+			return await Task.Run<(string, int)>(async () =>
 			{
 				if (rcsRestApiProcess is null)
 				{
-					
+
 					port = PortFinder.FindPort(Constants.MinGrpcPort, Constants.MaxGrpcPort, pluginLogger);
 
 					while (port > 0)
 					{
 						var directoryName = !string.IsNullOrEmpty(setupDir) ? setupDir : Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-						string apiExecutablePath = Path.Combine(directoryName, "IdeaStatiCa.RcsRestApi.exe");
+						string apiExecutablePath = Path.Combine(directoryName, Application_name);
 
-						if(!File.Exists(apiExecutablePath))
+						if (!File.Exists(apiExecutablePath))
 						{
 							pluginLogger.LogWarning($"RcsClientFactory.RunRcsRestApiService : '{apiExecutablePath}' doesn't exist");
 						}
@@ -89,18 +93,16 @@ namespace IdeaStatiCa.RcsClient.Factory
 						rcsRestApiProcess = new Process();
 						rcsRestApiProcess.StartInfo.FileName = apiExecutablePath;
 						rcsRestApiProcess.StartInfo.Arguments = arguments;
-						rcsRestApiProcess.StartInfo.UseShellExecute = false;
-#if !DEBUG
-						rcsRestApiProcess.StartInfo.CreateNoWindow = true;
-#endif
+						rcsRestApiProcess.StartInfo.UseShellExecute = true;
 						rcsRestApiProcess.Start();
 
-						// Wait for the API to start (you might need a more robust way to determine this)
-						Thread.Sleep(5000);
+						// Check if the API process is ready
+						var apiUrlBase = new Uri($"{LOCALHOST_URL}:{port}");
+						var apiUrlHeartbeat = new Uri(apiUrlBase, RestApiConstants.RestApiHeartbeat);
+						var cts = new CancellationTokenSource(TimeSpan.FromSeconds(120));
+						var isApiReady = await WaitForApiToBeReady(apiUrlHeartbeat, cts.Token);
 
-						// Check if the API process is still running
-						
-						if (!rcsRestApiProcess.HasExited)
+						if (isApiReady && !rcsRestApiProcess.HasExited)
 						{
 							rcsRestApiProcess.CloseMainWindow();
 							pluginLogger.LogInformation($"REST API process started on port {port}.");
@@ -115,7 +117,7 @@ namespace IdeaStatiCa.RcsClient.Factory
 				}
 
 				pluginLogger.LogDebug($"Created process with Id {rcsRestApiProcess.Id}");
-				return ($"{LOCALHOST_URL}:{port}", rcsRestApiProcess.Id);
+				return ($"{LOCALHOST_URL}:{port}/api/{API_VERSION_V1}/", rcsRestApiProcess.Id);
 			});
 		}
 
@@ -128,7 +130,7 @@ namespace IdeaStatiCa.RcsClient.Factory
 
 		private string GetRcsRestApiPath(string directory)
 		{
-			if(string.IsNullOrEmpty(directory))
+			if (string.IsNullOrEmpty(directory))
 			{
 				// setup dir is not passed
 				pluginLogger.LogDebug("GetRcsRestApiPath : setup dir is not passed");
@@ -138,7 +140,7 @@ namespace IdeaStatiCa.RcsClient.Factory
 
 			// IdeaStatiCa.RcsRestApi.exe is expected in net6.0-windows subdir. Do a chact and modified id if it is needed
 			string modifiedDir = directory;
-			if(!directory.ToLower().Contains("net6.0-windows"))
+			if (!directory.ToLower().Contains("net6.0-windows"))
 			{
 				pluginLogger.LogDebug("GetRcsRestApiPath trying to find subdir 'net6.0-windows'");
 				var dir = Path.Combine(directory, "net6.0-windows");
@@ -155,6 +157,36 @@ namespace IdeaStatiCa.RcsClient.Factory
 
 			pluginLogger.LogWarning($"GetRcsRestApiPath : returning '{modifiedDir}'");
 			return modifiedDir;
+		}
+
+		private async Task<bool> WaitForApiToBeReady(Uri apiUrl, CancellationToken cts)
+		{
+			using (var httpClient = new HttpClient())
+			{
+				while (!cts.IsCancellationRequested)
+				{
+					try
+					{
+						var response = await httpClient.GetAsync(apiUrl, HttpCompletionOption.ResponseHeadersRead, cts);
+						if (response.IsSuccessStatusCode)
+						{
+							return true;
+						}
+					}
+					catch (HttpRequestException ex)
+					{
+						pluginLogger.LogDebug($"Error waiting for the REST API to be ready.", ex);
+					}
+					catch (TaskCanceledException)
+					{
+						pluginLogger.LogDebug("Timeout occur during http call waiting for the REST API to be ready.");
+						return false;
+					}
+					await Task.Delay(3000, cts);
+				}
+				pluginLogger.LogDebug("Timeout waiting for the REST API to be ready.");
+				return false;
+			}
 		}
 	}
 }

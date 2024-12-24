@@ -1,28 +1,41 @@
-# ideastatica_connection_api.MaterialApi
+# MaterialApi
 
 All URIs are relative to *http://localhost*
 
-Method | HTTP request | Description
-------------- | ------------- | -------------
-[**add_bolt_assembly**](MaterialApi.md#add_bolt_assembly) | **POST** /api/1/projects/{projectId}/materials/bolt-assemblies | Add bolt assembly to the project
-[**add_cross_section**](MaterialApi.md#add_cross_section) | **POST** /api/1/projects/{projectId}/materials/cross-sections | Add cross section to the project
-[**add_material_bolt_grade**](MaterialApi.md#add_material_bolt_grade) | **POST** /api/1/projects/{projectId}/materials/bolt-grade | Add material to the project
-[**add_material_concrete**](MaterialApi.md#add_material_concrete) | **POST** /api/1/projects/{projectId}/materials/concrete | Add material to the project
-[**add_material_steel**](MaterialApi.md#add_material_steel) | **POST** /api/1/projects/{projectId}/materials/steel | Add material to the project
-[**add_material_weld**](MaterialApi.md#add_material_weld) | **POST** /api/1/projects/{projectId}/materials/welding | Add material to the project
-[**get_all_materials**](MaterialApi.md#get_all_materials) | **GET** /api/1/projects/{projectId}/materials | Get materials which are used in the project projectId
-[**get_bolt_assemblies**](MaterialApi.md#get_bolt_assemblies) | **GET** /api/1/projects/{projectId}/materials/bolt-assemblies | Get bolt assemblies which are used in the project projectId
-[**get_bolt_grade_materials**](MaterialApi.md#get_bolt_grade_materials) | **GET** /api/1/projects/{projectId}/materials/bolt-grade | Get materials which are used in the project projectId
-[**get_concrete_materials**](MaterialApi.md#get_concrete_materials) | **GET** /api/1/projects/{projectId}/materials/concrete | Get materials which are used in the project projectId
-[**get_cross_sections**](MaterialApi.md#get_cross_sections) | **GET** /api/1/projects/{projectId}/materials/cross-sections | Get cross sections which are used in the project projectId
-[**get_steel_materials**](MaterialApi.md#get_steel_materials) | **GET** /api/1/projects/{projectId}/materials/steel | Get materials which are used in the project projectId
-[**get_welding_materials**](MaterialApi.md#get_welding_materials) | **GET** /api/1/projects/{projectId}/materials/welding | Get materials which are used in the project projectId
+Method | Description
+------------- | -------------
+[**add_bolt_assembly**](MaterialApi.md#add_bolt_assembly) | Add bolt assembly to the project
+[**add_cross_section**](MaterialApi.md#add_cross_section) | Add cross section to the project
+[**add_material_bolt_grade**](MaterialApi.md#add_material_bolt_grade) | Add material to the project
+[**add_material_concrete**](MaterialApi.md#add_material_concrete) | Add material to the project
+[**add_material_steel**](MaterialApi.md#add_material_steel) | Add material to the project
+[**add_material_weld**](MaterialApi.md#add_material_weld) | Add material to the project
+[**get_all_materials**](MaterialApi.md#get_all_materials) | Get materials which are used in the project projectId
+[**get_bolt_assemblies**](MaterialApi.md#get_bolt_assemblies) | Get bolt assemblies which are used in the project projectId
+[**get_bolt_grade_materials**](MaterialApi.md#get_bolt_grade_materials) | Get materials which are used in the project projectId
+[**get_concrete_materials**](MaterialApi.md#get_concrete_materials) | Get materials which are used in the project projectId
+[**get_cross_sections**](MaterialApi.md#get_cross_sections) | Get cross sections which are used in the project projectId
+[**get_steel_materials**](MaterialApi.md#get_steel_materials) | Get materials which are used in the project projectId
+[**get_welding_materials**](MaterialApi.md#get_welding_materials) | Get materials which are used in the project projectId
 
 
+<a id="add_bolt_assembly"></a>
 # **add_bolt_assembly**
-> ConMprlElement add_bolt_assembly(project_id, con_mprl_element=con_mprl_element)
+> add_bolt_assembly(project_id, con_mprl_element=con_mprl_element)
 
 Add bolt assembly to the project
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+ **con_mprl_element** | [**ConMprlElement**](ConMprlElement.md)| Definition of a new bolt assemby to be added to the project | [optional] 
+
+### Return type
+
+void (empty response body)
 
 ### Example
 
@@ -42,6 +55,7 @@ configuration = ideastatica_connection_api.Configuration(
 
 # Enter a context with an instance of the API client
 with ideastatica_connection_api.ApiClient(configuration) as api_client:
+    
     # Create an instance of the API class
     api_instance = ideastatica_connection_api.MaterialApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
@@ -49,26 +63,24 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
     try:
         # Add bolt assembly to the project
-        api_response = api_instance.add_bolt_assembly(project_id, con_mprl_element=con_mprl_element)
-        print("The response of MaterialApi->add_bolt_assembly:\n")
-        pprint(api_response)
+        api_instance.add_bolt_assembly(project_id, con_mprl_element=con_mprl_element)
     except Exception as e:
         print("Exception when calling MaterialApi->add_bolt_assembly: %s\n" % e)
 ```
 
 
 
-### Parameters
+### Code Samples
 
+Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
- **con_mprl_element** | [**ConMprlElement**](ConMprlElement.md)| Definition of a new bolt assemby to be added to the project | [optional] 
+### REST Usage
 
-### Return type
+#### Http Request
 
-[**ConMprlElement**](ConMprlElement.md)
+All URIs are relative to *http://localhost*
+
+> **POST** /api/1/projects/{projectId}/materials/bolt-assemblies 
 
 ### Authorization
 
@@ -77,7 +89,7 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: application/json
+ - **Accept**: Not defined
 
 ### HTTP response details
 
@@ -87,10 +99,23 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a id="add_cross_section"></a>
 # **add_cross_section**
-> ConMprlCrossSection add_cross_section(project_id, con_mprl_cross_section=con_mprl_cross_section)
+> add_cross_section(project_id, con_mprl_cross_section=con_mprl_cross_section)
 
 Add cross section to the project
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+ **con_mprl_cross_section** | [**ConMprlCrossSection**](ConMprlCrossSection.md)| Definition of a new cross-section to be added to the project | [optional] 
+
+### Return type
+
+void (empty response body)
 
 ### Example
 
@@ -110,6 +135,7 @@ configuration = ideastatica_connection_api.Configuration(
 
 # Enter a context with an instance of the API client
 with ideastatica_connection_api.ApiClient(configuration) as api_client:
+    
     # Create an instance of the API class
     api_instance = ideastatica_connection_api.MaterialApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
@@ -117,26 +143,24 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
     try:
         # Add cross section to the project
-        api_response = api_instance.add_cross_section(project_id, con_mprl_cross_section=con_mprl_cross_section)
-        print("The response of MaterialApi->add_cross_section:\n")
-        pprint(api_response)
+        api_instance.add_cross_section(project_id, con_mprl_cross_section=con_mprl_cross_section)
     except Exception as e:
         print("Exception when calling MaterialApi->add_cross_section: %s\n" % e)
 ```
 
 
 
-### Parameters
+### Code Samples
 
+Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
- **con_mprl_cross_section** | [**ConMprlCrossSection**](ConMprlCrossSection.md)| Definition of a new cross-section to be added to the project | [optional] 
+### REST Usage
 
-### Return type
+#### Http Request
 
-[**ConMprlCrossSection**](ConMprlCrossSection.md)
+All URIs are relative to *http://localhost*
+
+> **POST** /api/1/projects/{projectId}/materials/cross-sections 
 
 ### Authorization
 
@@ -145,7 +169,7 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: application/json
+ - **Accept**: Not defined
 
 ### HTTP response details
 
@@ -155,10 +179,23 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a id="add_material_bolt_grade"></a>
 # **add_material_bolt_grade**
-> ConMprlElement add_material_bolt_grade(project_id, con_mprl_element=con_mprl_element)
+> add_material_bolt_grade(project_id, con_mprl_element=con_mprl_element)
 
 Add material to the project
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+ **con_mprl_element** | [**ConMprlElement**](ConMprlElement.md)| Definition of a new material to be added to the project | [optional] 
+
+### Return type
+
+void (empty response body)
 
 ### Example
 
@@ -178,6 +215,7 @@ configuration = ideastatica_connection_api.Configuration(
 
 # Enter a context with an instance of the API client
 with ideastatica_connection_api.ApiClient(configuration) as api_client:
+    
     # Create an instance of the API class
     api_instance = ideastatica_connection_api.MaterialApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
@@ -185,15 +223,48 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
     try:
         # Add material to the project
-        api_response = api_instance.add_material_bolt_grade(project_id, con_mprl_element=con_mprl_element)
-        print("The response of MaterialApi->add_material_bolt_grade:\n")
-        pprint(api_response)
+        api_instance.add_material_bolt_grade(project_id, con_mprl_element=con_mprl_element)
     except Exception as e:
         print("Exception when calling MaterialApi->add_material_bolt_grade: %s\n" % e)
 ```
 
 
 
+### Code Samples
+
+Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
+
+### REST Usage
+
+#### Http Request
+
+All URIs are relative to *http://localhost*
+
+> **POST** /api/1/projects/{projectId}/materials/bolt-grade 
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: Not defined
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Success |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a id="add_material_concrete"></a>
+# **add_material_concrete**
+> add_material_concrete(project_id, con_mprl_element=con_mprl_element)
+
+Add material to the project
+
 ### Parameters
 
 
@@ -204,29 +275,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**ConMprlElement**](ConMprlElement.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-### HTTP response details
-
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Success |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **add_material_concrete**
-> ConMprlElement add_material_concrete(project_id, con_mprl_element=con_mprl_element)
-
-Add material to the project
+void (empty response body)
 
 ### Example
 
@@ -246,6 +295,7 @@ configuration = ideastatica_connection_api.Configuration(
 
 # Enter a context with an instance of the API client
 with ideastatica_connection_api.ApiClient(configuration) as api_client:
+    
     # Create an instance of the API class
     api_instance = ideastatica_connection_api.MaterialApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
@@ -253,15 +303,48 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
     try:
         # Add material to the project
-        api_response = api_instance.add_material_concrete(project_id, con_mprl_element=con_mprl_element)
-        print("The response of MaterialApi->add_material_concrete:\n")
-        pprint(api_response)
+        api_instance.add_material_concrete(project_id, con_mprl_element=con_mprl_element)
     except Exception as e:
         print("Exception when calling MaterialApi->add_material_concrete: %s\n" % e)
 ```
 
 
 
+### Code Samples
+
+Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
+
+### REST Usage
+
+#### Http Request
+
+All URIs are relative to *http://localhost*
+
+> **POST** /api/1/projects/{projectId}/materials/concrete 
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: Not defined
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Success |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a id="add_material_steel"></a>
+# **add_material_steel**
+> add_material_steel(project_id, con_mprl_element=con_mprl_element)
+
+Add material to the project
+
 ### Parameters
 
 
@@ -272,29 +355,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**ConMprlElement**](ConMprlElement.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-### HTTP response details
-
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Success |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **add_material_steel**
-> ConMprlElement add_material_steel(project_id, con_mprl_element=con_mprl_element)
-
-Add material to the project
+void (empty response body)
 
 ### Example
 
@@ -314,6 +375,7 @@ configuration = ideastatica_connection_api.Configuration(
 
 # Enter a context with an instance of the API client
 with ideastatica_connection_api.ApiClient(configuration) as api_client:
+    
     # Create an instance of the API class
     api_instance = ideastatica_connection_api.MaterialApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
@@ -321,15 +383,48 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
     try:
         # Add material to the project
-        api_response = api_instance.add_material_steel(project_id, con_mprl_element=con_mprl_element)
-        print("The response of MaterialApi->add_material_steel:\n")
-        pprint(api_response)
+        api_instance.add_material_steel(project_id, con_mprl_element=con_mprl_element)
     except Exception as e:
         print("Exception when calling MaterialApi->add_material_steel: %s\n" % e)
 ```
 
 
 
+### Code Samples
+
+Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
+
+### REST Usage
+
+#### Http Request
+
+All URIs are relative to *http://localhost*
+
+> **POST** /api/1/projects/{projectId}/materials/steel 
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: Not defined
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Success |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a id="add_material_weld"></a>
+# **add_material_weld**
+> add_material_weld(project_id, con_mprl_element=con_mprl_element)
+
+Add material to the project
+
 ### Parameters
 
 
@@ -340,29 +435,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**ConMprlElement**](ConMprlElement.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-### HTTP response details
-
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Success |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **add_material_weld**
-> ConMprlElement add_material_weld(project_id, con_mprl_element=con_mprl_element)
-
-Add material to the project
+void (empty response body)
 
 ### Example
 
@@ -382,6 +455,7 @@ configuration = ideastatica_connection_api.Configuration(
 
 # Enter a context with an instance of the API client
 with ideastatica_connection_api.ApiClient(configuration) as api_client:
+    
     # Create an instance of the API class
     api_instance = ideastatica_connection_api.MaterialApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
@@ -389,26 +463,24 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
     try:
         # Add material to the project
-        api_response = api_instance.add_material_weld(project_id, con_mprl_element=con_mprl_element)
-        print("The response of MaterialApi->add_material_weld:\n")
-        pprint(api_response)
+        api_instance.add_material_weld(project_id, con_mprl_element=con_mprl_element)
     except Exception as e:
         print("Exception when calling MaterialApi->add_material_weld: %s\n" % e)
 ```
 
 
 
-### Parameters
+### Code Samples
 
+Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
- **con_mprl_element** | [**ConMprlElement**](ConMprlElement.md)| Definition of a new material to be added to the project | [optional] 
+### REST Usage
 
-### Return type
+#### Http Request
 
-[**ConMprlElement**](ConMprlElement.md)
+All URIs are relative to *http://localhost*
+
+> **POST** /api/1/projects/{projectId}/materials/welding 
 
 ### Authorization
 
@@ -417,7 +489,7 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: application/json
+ - **Accept**: Not defined
 
 ### HTTP response details
 
@@ -427,10 +499,22 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a id="get_all_materials"></a>
 # **get_all_materials**
 > List[object] get_all_materials(project_id)
 
 Get materials which are used in the project projectId
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+
+### Return type
+
+**List[object]**
 
 ### Example
 
@@ -449,6 +533,7 @@ configuration = ideastatica_connection_api.Configuration(
 
 # Enter a context with an instance of the API client
 with ideastatica_connection_api.ApiClient(configuration) as api_client:
+    
     # Create an instance of the API class
     api_instance = ideastatica_connection_api.MaterialApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
@@ -464,16 +549,17 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
 
 
-### Parameters
+### Code Samples
 
+Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+### REST Usage
 
-### Return type
+#### Http Request
 
-**List[object]**
+All URIs are relative to *http://localhost*
+
+> **GET** /api/1/projects/{projectId}/materials 
 
 ### Authorization
 
@@ -492,10 +578,22 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a id="get_bolt_assemblies"></a>
 # **get_bolt_assemblies**
 > List[object] get_bolt_assemblies(project_id)
 
 Get bolt assemblies which are used in the project projectId
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+
+### Return type
+
+**List[object]**
 
 ### Example
 
@@ -514,6 +612,7 @@ configuration = ideastatica_connection_api.Configuration(
 
 # Enter a context with an instance of the API client
 with ideastatica_connection_api.ApiClient(configuration) as api_client:
+    
     # Create an instance of the API class
     api_instance = ideastatica_connection_api.MaterialApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
@@ -529,16 +628,17 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
 
 
-### Parameters
+### Code Samples
 
+Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+### REST Usage
 
-### Return type
+#### Http Request
 
-**List[object]**
+All URIs are relative to *http://localhost*
+
+> **GET** /api/1/projects/{projectId}/materials/bolt-assemblies 
 
 ### Authorization
 
@@ -557,10 +657,22 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a id="get_bolt_grade_materials"></a>
 # **get_bolt_grade_materials**
 > List[object] get_bolt_grade_materials(project_id)
 
 Get materials which are used in the project projectId
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+
+### Return type
+
+**List[object]**
 
 ### Example
 
@@ -579,6 +691,7 @@ configuration = ideastatica_connection_api.Configuration(
 
 # Enter a context with an instance of the API client
 with ideastatica_connection_api.ApiClient(configuration) as api_client:
+    
     # Create an instance of the API class
     api_instance = ideastatica_connection_api.MaterialApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
@@ -594,16 +707,17 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
 
 
-### Parameters
+### Code Samples
 
+Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+### REST Usage
 
-### Return type
+#### Http Request
 
-**List[object]**
+All URIs are relative to *http://localhost*
+
+> **GET** /api/1/projects/{projectId}/materials/bolt-grade 
 
 ### Authorization
 
@@ -622,10 +736,22 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a id="get_concrete_materials"></a>
 # **get_concrete_materials**
 > List[object] get_concrete_materials(project_id)
 
 Get materials which are used in the project projectId
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+
+### Return type
+
+**List[object]**
 
 ### Example
 
@@ -644,6 +770,7 @@ configuration = ideastatica_connection_api.Configuration(
 
 # Enter a context with an instance of the API client
 with ideastatica_connection_api.ApiClient(configuration) as api_client:
+    
     # Create an instance of the API class
     api_instance = ideastatica_connection_api.MaterialApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
@@ -659,16 +786,17 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
 
 
-### Parameters
+### Code Samples
 
+Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+### REST Usage
 
-### Return type
+#### Http Request
 
-**List[object]**
+All URIs are relative to *http://localhost*
+
+> **GET** /api/1/projects/{projectId}/materials/concrete 
 
 ### Authorization
 
@@ -687,10 +815,22 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a id="get_cross_sections"></a>
 # **get_cross_sections**
 > List[object] get_cross_sections(project_id)
 
 Get cross sections which are used in the project projectId
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+
+### Return type
+
+**List[object]**
 
 ### Example
 
@@ -709,6 +849,7 @@ configuration = ideastatica_connection_api.Configuration(
 
 # Enter a context with an instance of the API client
 with ideastatica_connection_api.ApiClient(configuration) as api_client:
+    
     # Create an instance of the API class
     api_instance = ideastatica_connection_api.MaterialApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
@@ -724,16 +865,17 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
 
 
-### Parameters
+### Code Samples
 
+Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+### REST Usage
 
-### Return type
+#### Http Request
 
-**List[object]**
+All URIs are relative to *http://localhost*
+
+> **GET** /api/1/projects/{projectId}/materials/cross-sections 
 
 ### Authorization
 
@@ -752,10 +894,22 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a id="get_steel_materials"></a>
 # **get_steel_materials**
 > List[object] get_steel_materials(project_id)
 
 Get materials which are used in the project projectId
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+
+### Return type
+
+**List[object]**
 
 ### Example
 
@@ -774,6 +928,7 @@ configuration = ideastatica_connection_api.Configuration(
 
 # Enter a context with an instance of the API client
 with ideastatica_connection_api.ApiClient(configuration) as api_client:
+    
     # Create an instance of the API class
     api_instance = ideastatica_connection_api.MaterialApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
@@ -789,16 +944,17 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
 
 
-### Parameters
+### Code Samples
 
+Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+### REST Usage
 
-### Return type
+#### Http Request
 
-**List[object]**
+All URIs are relative to *http://localhost*
+
+> **GET** /api/1/projects/{projectId}/materials/steel 
 
 ### Authorization
 
@@ -817,10 +973,22 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a id="get_welding_materials"></a>
 # **get_welding_materials**
 > List[object] get_welding_materials(project_id)
 
 Get materials which are used in the project projectId
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+
+### Return type
+
+**List[object]**
 
 ### Example
 
@@ -839,6 +1007,7 @@ configuration = ideastatica_connection_api.Configuration(
 
 # Enter a context with an instance of the API client
 with ideastatica_connection_api.ApiClient(configuration) as api_client:
+    
     # Create an instance of the API class
     api_instance = ideastatica_connection_api.MaterialApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
@@ -854,16 +1023,17 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
 
 
-### Parameters
+### Code Samples
 
+Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **project_id** | **str**| The unique identifier of the opened project in the ConnectionRestApi service | 
+### REST Usage
 
-### Return type
+#### Http Request
 
-**List[object]**
+All URIs are relative to *http://localhost*
+
+> **GET** /api/1/projects/{projectId}/materials/welding 
 
 ### Authorization
 

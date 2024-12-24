@@ -1,5 +1,6 @@
 using IdeaStatiCa.ConnectionApi.Model;
 using FluentAssertions;
+using IdeaStatiCa.Api.Connection.Model;
 
 namespace ST_ConnectionRestApi
 {
@@ -22,7 +23,7 @@ namespace ST_ConnectionRestApi
 			//	ConnectionApiClient = await ApiFactory.CreateConnectionApiClient(ApiUri);
 			//}
 
-			ConnectionApiClient = await ApiFactory.CreateConnectionApiClient();
+			ConnectionApiClient = await ApiFactory.CreateApiClient();
 
 			string connProjectFilePath = Path.Combine(ProjectPath, "Simple-1-ECEN.ideaCon");
 			this.Project = await ConnectionApiClient.Project.OpenProjectAsync(connProjectFilePath);
@@ -71,7 +72,7 @@ namespace ST_ConnectionRestApi
 
 			var con1 = connections[0];
 			con1.Id.Should().Be(1);
-			con1.AnalysisType.Should().Be(ConAnalysisTypeEnum.StressStrain);
+			con1.AnalysisType.Should().Be(ConAnalysisTypeEnum.Stress_Strain);
 			con1.Name.Should().Be("1Col-2Beams-Welded");
 			con1.Description.Should().Be("Welded connection");
 
@@ -276,7 +277,7 @@ namespace ST_ConnectionRestApi
 			List<int> conToCalc = new List<int>() { con1.Id };
 			ConCalculationParameter conCalculationParameter = new ConCalculationParameter()
 			{
-				AnalysisType = ConAnalysisTypeEnum.StressStrain,
+				AnalysisType = ConAnalysisTypeEnum.Stress_Strain,
 				ConnectionIds = new List<int>() { con1.Id }
 			};
 
@@ -319,7 +320,7 @@ namespace ST_ConnectionRestApi
 		{
 			string connProjectFilePath = Path.Combine(ProjectPath, "Parametric.ideaCon");
 
-			using (var apiClient2 = await ApiFactory.CreateConnectionApiClient())
+			using (var apiClient2 = await ApiFactory.CreateApiClient())
 			{
 				var project2 = await apiClient2!.Project.OpenProjectAsync(connProjectFilePath);
 
@@ -328,7 +329,7 @@ namespace ST_ConnectionRestApi
 
 				ConCalculationParameter conCalculationParameter = new ConCalculationParameter()
 				{
-					AnalysisType = ConAnalysisTypeEnum.StressStrain,
+					AnalysisType = ConAnalysisTypeEnum.Stress_Strain,
 					ConnectionIds = new List<int>() { con1.Id }
 				};
 

@@ -1,5 +1,7 @@
-﻿using IdeaStatiCa.ConnectionApi;
-using IdeaStatiCa.ConnectionApi.Model;
+﻿using IdeaStatiCa.Api.Connection.Model;
+using IdeaStatiCa.Api.Connection.Model.Connection;
+using IdeaStatiCa.ConnectionApi;
+
 
 namespace CodeSamples
 {
@@ -9,22 +11,20 @@ namespace CodeSamples
 		/// Update existing load effects in a connection.
 		/// </summary>
 		/// <param name="conClient">The connected API Client</param>
-		public static async Task UpdateLoadEffect(ConnectionApiClient conClient)
+		public static async Task UpdateLoadEffect(IConnectionApiClient conClient)
 		{
 			string filePath = "inputs/simple knee connection.ideaCon";
-			ConProject conProject = await conClient.Project.OpenProjectAsync(filePath);
+			await conClient.Project.OpenProjectAsync(filePath);
 
-			//Get projectId Guid
-			Guid projectId = conProject.ProjectId;
-			var connections = await conClient.Connection.GetConnectionsAsync(projectId);
+			var connections = await conClient.Connection.GetConnectionsAsync(conClient.ActiveProjectId);
 			int connectionId = connections[0].Id;
 
-			ConLoadSettings loadSettings = await conClient.LoadEffect.GetLoadSettingsAsync(projectId, connectionId);
+			ConLoadSettings loadSettings = await conClient.LoadEffect.GetLoadSettingsAsync(conClient.ActiveProjectId, connectionId);
 
 			Console.WriteLine(loadSettings.ToString());
 
 			// Get Load Effects
-			List<ConLoadEffect> loadEffects = await conClient.LoadEffect.GetLoadEffectsAsync(projectId, connectionId);
+			List<ConLoadEffect> loadEffects = await conClient.LoadEffect.GetLoadEffectsAsync(conClient.ActiveProjectId, connectionId);
 
 			double effectMultiplier = 1.25;
 
@@ -39,12 +39,13 @@ namespace CodeSamples
 				}
 
 				ConLoadEffect loadEffect = loadEffects[i];
-				// FIX: LoadEffect provides all the member loadings - even if LoadsInEquilibrium is set to False. Is this correct??
+				var memberLoadings = loadEffect.MemberLoadings.ToList();
 
-				for (int j = 0; j < loadEffect.MemberLoadings.Count; j++)
+				// NOTE: LoadEffect provides all the member loadings - even if LoadsInEquilibrium is set to False.
+				for (int j = 0; j < memberLoadings.Count; j++)
 				{
-					ConLoadEffectMemberLoad loading = loadEffect.MemberLoadings[j];
-					ConLoadEffectMemberLoad loadingBasis = loadEffectBasis.MemberLoadings[j];
+					ConLoadEffectMemberLoad loading = memberLoadings[j];
+					ConLoadEffectMemberLoad loadingBasis = memberLoadings[j];
 
 					loading.SectionLoad.N = loadingBasis.SectionLoad.N * effectMultiplier;
 					loading.SectionLoad.Vy = loadingBasis.SectionLoad.Vy * effectMultiplier;
@@ -54,8 +55,7 @@ namespace CodeSamples
 					loading.SectionLoad.Mx = loadingBasis.SectionLoad.Mx * effectMultiplier;
 				}
 
-				// 
-				await conClient.LoadEffect.UpdateLoadEffectAsync(projectId, connectionId, loadEffect);
+				await conClient.LoadEffect.UpdateLoadEffectAsync(conClient.ActiveProjectId, connectionId, loadEffect);
 
 				// Increase each increment by 25% of the original value.
 				effectMultiplier += 0.25;
@@ -66,13 +66,12 @@ namespace CodeSamples
 			// Save updated file.
 			string fileName = "updated-load-effects.ideaCon";
 			string saveFilePath = Path.Combine(exampleFolder, fileName);
-			await conClient.Project.SaveProjectAsync(projectId, saveFilePath);
+			await conClient.Project.SaveProjectAsync(conClient.ActiveProjectId, saveFilePath);
 
 			Console.WriteLine("File saved to: " + saveFilePath);
 
 			//Close the opened project.
-			await conClient.Project.CloseProjectAsync(projectId);
-
+			await conClient.Project.CloseProjectAsync(conClient.ActiveProjectId);
 
 		}
 	}

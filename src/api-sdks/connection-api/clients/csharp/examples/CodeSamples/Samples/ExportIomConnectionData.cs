@@ -1,5 +1,6 @@
-﻿using IdeaStatiCa.ConnectionApi;
-using IdeaStatiCa.ConnectionApi.Model;
+﻿using IdeaRS.OpenModel.Connection;
+using IdeaStatiCa.Api.Connection.Model;
+using IdeaStatiCa.ConnectionApi;
 
 namespace CodeSamples
 {
@@ -9,18 +10,15 @@ namespace CodeSamples
 		/// Gets the IOM Connection Data associated with a given connection.
 		/// </summary>
 		/// <param name="conClient">The connected API Client</param>
-		public static async Task ExportIomConnectionData(ConnectionApiClient conClient) 
+		public static async Task ExportIomConnectionData(IConnectionApiClient conClient) 
 		{
 			string filePath = "Inputs/HSS_norm_cond.ideaCon";
-			ConProject conProject = await conClient.Project.OpenProjectAsync(filePath);
+			await conClient.Project.OpenProjectAsync(filePath);
 
-			//Get projectId Guid
-			Guid projectId = conProject.ProjectId;
-			var connections = await conClient.Connection.GetConnectionsAsync(projectId);
+			var connections = await conClient.Connection.GetConnectionsAsync(conClient.ActiveProjectId);
 			int connectionId = connections[0].Id;
 
-			//FIX: This should export IdeaRS classes not the client classes.
-			ConnectionData conData = await conClient.Export.ExportIomConnectionDataAsync(projectId, connectionId);
+			ConnectionData conData = await conClient.Export.ExportIomConnectionDataAsync(conClient.ActiveProjectId, connectionId);
 
 			//Print the connection data to the Console.
 			Console.WriteLine($"Number of Plates: { conData.Plates.Count()}");
@@ -28,7 +26,8 @@ namespace CodeSamples
 			Console.WriteLine($"Number of Welds: {conData.Welds.Count()}");
 			Console.WriteLine($"Number of Cuts: {conData.CutBeamByBeams.Count()}");
 
-			await conClient.Project.CloseProjectAsync(projectId);
+			//Close the opened project.
+			await conClient.Project.CloseProjectAsync(conClient.ActiveProjectId);
 		}
 	}
 }

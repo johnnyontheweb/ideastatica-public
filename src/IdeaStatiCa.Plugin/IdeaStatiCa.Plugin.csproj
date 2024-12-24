@@ -2,7 +2,7 @@
   <Import Project="..\Common.props" />
   
   <PropertyGroup>
-    <TargetFrameworks>net471;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net48;netstandard2.1</TargetFrameworks>
     <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
     <LangVersion>8.0</LangVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -10,7 +10,6 @@
     <Description>Gateway to IDEA StatiCa. Includes classes which allows communication and controlling IDEA StatiCa applications and includes classes which provides IDEA StatiCa services to other applications.</Description>
     <Configurations>Release_IdeaStatiCa_Internal;Debug_IdeaStatiCa_Internal;Debug;Release</Configurations>
     <PackageId>IdeaStatiCa.Plugin</PackageId>
-    <PackageLicenseFile>README.md</PackageLicenseFile>
     <PackageTags>IdeaStatiCa;BIM;C#;FEA;IOM</PackageTags>
   </PropertyGroup>
     
@@ -21,31 +20,32 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   
+  <ItemGroup Condition="'$(TargetFramework)' != 'net48'">
+    <ProjectReference Include="..\IdeaStatiCa.NetFrameworkPort\IdeaStatiCa.NetFrameworkPort.csproj">
+      <PrivateAssets>all</PrivateAssets>
+    </ProjectReference>
+  </ItemGroup>
+  
+  
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Castle.Windsor" Version="5.1.1" />
-    <PackageReference Include="Google.Protobuf" Version="3.21.3" />
-    <PackageReference Include="Grpc.Core" Version="2.46.3" />
-    <PackageReference Include="Grpc.Tools" Version="2.47.0">
+    <PackageReference Include="Microsoft.CSharp" />
+    <PackageReference Include="Castle.Windsor" />
+    <PackageReference Include="Google.Protobuf" />
+    <PackageReference Include="Grpc.Core" />
+    <PackageReference Include="Grpc.Tools">
     <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="System.Collections.Immutable" />
+    
+    <PackageReference Include="System.Net.Http" />
+    <PackageReference Include="System.Text.RegularExpressions" />
   </ItemGroup>
   
-  <ItemGroup>
-    <None Remove="Grpc\GrpcReflectionServiceContract.proto" />
-    <None Include="..\..\..\ideastatica-public\README.md">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\IdeaRS.OpenModel\IdeaRS.OpenModel.csproj" />
-    <ProjectReference Include="..\IdeaStatiCa.NetFrameworkPort\IdeaStatiCa.NetFrameworkPort.csproj" />
     <ProjectReference Include="..\IdeaStatiCa.Public\IdeaStatiCa.Public.csproj" />
   </ItemGroup>
   
