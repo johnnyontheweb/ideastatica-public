@@ -18,7 +18,7 @@ namespace IdeaStatiCa.TeklaStructuresPlugin.Utils
 		internal static List<IIdentifier> GetIdentifier(ModelObject teklaObject, ref List<IIdentifier> identifiers, bool addToCollection = true, Point connectionPoint = null)
 		{
 			if (teklaObject is TS.Beam beamPart
-				&& StiffeningMemberFilterl(beamPart)
+				&& StiffeningMemberFilter(beamPart)
 				&& !AnchorMemberFilter(beamPart) //in not anchor
 				&& !BulkSelectionHelper.IsRectangularCssBeam(beamPart))
 			{
@@ -59,7 +59,7 @@ namespace IdeaStatiCa.TeklaStructuresPlugin.Utils
 					AddIdentifier<IIdeaConcreteBlock>(identifiers, teklaObject, beamAsPlate.Identifier.GUID.ToString());
 					AddConcreteBlockToAnchor(identifiers);
 				}
-				else if (StiffeningMemberFilterl(beamAsPlate) && addToCollection && BulkSelectionHelper.IsRectangularCssBeam(beamAsPlate))
+				else if (StiffeningMemberFilter(beamAsPlate) && addToCollection && BulkSelectionHelper.IsRectangularCssBeam(beamAsPlate))
 				{
 					AddIdentifier<IIdeaPlate>(identifiers, teklaObject, beamAsPlate.Identifier.GUID.ToString());
 				}
@@ -152,6 +152,18 @@ namespace IdeaStatiCa.TeklaStructuresPlugin.Utils
 						continue;
 					}
 
+					var boltCs = boltGroup.GetCoordinateSystem();
+
+					if (!IsPointNearOfConnection(connectionPoint, teklaPart, boltCs.Origin as Point))
+					{
+						//not skip for Stiffening Member as plate 
+						if (!(StiffeningMemberFilter(teklaPart) && addToCollection && BulkSelectionHelper.IsRectangularCssBeam(teklaPart)))
+						{
+							//skip item too far from connection point
+							continue;
+						}
+					}
+
 					//test if is baseplate with dummy bolt group
 					if (!teklaPart.Identifier.Equals(boltGroup.PartToBeBolted.Identifier) || !teklaPart.Identifier.Equals(boltGroup.PartToBoltTo.Identifier) || boltGroup.OtherPartsToBolt.Count != 0)
 					{
@@ -165,10 +177,21 @@ namespace IdeaStatiCa.TeklaStructuresPlugin.Utils
 				{
 					var modelObj = welds.Current;
 
-					if (!(modelObj is TS.BaseWeld))
+					if (!(modelObj is TS.BaseWeld weld))
 					{
 						continue;
 					}
+					var weldCs = weld.GetCoordinateSystem();
+					if (!IsPointNearOfConnection(connectionPoint, teklaPart, weldCs.Origin as Point))
+					{
+						//not skip for Stiffening Member as plate 
+						if (!(StiffeningMemberFilter(teklaPart) && addToCollection && BulkSelectionHelper.IsRectangularCssBeam(teklaPart)))
+						{
+							//skip item too far from connection point
+							continue;
+						}
+					}
+
 					identifiers = GetIdentifier(modelObj, ref identifiers, addToCollection, connectionPoint);
 				}
 			}
@@ -244,6 +267,25 @@ namespace IdeaStatiCa.TeklaStructuresPlugin.Utils
 			return IsIntersectPointInSphereOfConnection(connectionPoint, beam, tsWorkplanePoint);
 		}
 
+		private static bool IsPointNearOfConnection(Point connectionPoint, Part beam, Point nearPoint)
+		{
+			var distanceToNearPoint = Distance.PointToPoint(connectionPoint, nearPoint);
+			var cuttedCenterline = beam.GetCenterLine(true);
+			// 1/4 of len member
+			var beamLen = Distance.PointToPoint(cuttedCenterline[0] as Point, cuttedCenterline[cuttedCenterline.Count - 1] as Point);
+
+
+			if (distanceToNearPoint.IsLesserOrEqual(beamLen / 4))
+			{
+				//skip cut its on otherside of member
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
 		private static bool IsIntersectPointInSphereOfConnection(Point connectionPoint, Part beam, Point workPlanePoint)
 		{
 			var cuttedCenterline = beam.GetCenterLine(true);
@@ -295,7 +337,7 @@ namespace IdeaStatiCa.TeklaStructuresPlugin.Utils
 				return true;
 			}
 		}
-		private static bool StiffeningMemberFilterl(Part beam)
+		private static bool StiffeningMemberFilter(Part beam)
 		{
 
 			//skip anchor member

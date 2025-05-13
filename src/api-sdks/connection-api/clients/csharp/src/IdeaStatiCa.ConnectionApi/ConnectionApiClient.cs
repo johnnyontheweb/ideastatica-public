@@ -1,6 +1,7 @@
 ﻿using IdeaStatiCa.ConnectionApi.Api;
 using IdeaStatiCa.ConnectionApi.Client;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace IdeaStatiCa.ConnectionApi
@@ -64,6 +65,9 @@ namespace IdeaStatiCa.ConnectionApi
 		/// <inheritdoc cref="IConnectionApiClient.Template"/>
 		public ITemplateApiExtAsync Template { get; private set; }
 
+		/// <inheritdoc cref="IConnectionApiClient.Conversion"/>
+		public IConversionApiAsync Conversion { get; private set; }
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -107,6 +111,7 @@ namespace IdeaStatiCa.ConnectionApi
 			this.Project = null;
 			this.Report = null;
 			this.Template = null;
+			this.Conversion = null;
 			this.ClientApi = null;
 			this.ClientId = string.Empty;
 
@@ -115,6 +120,7 @@ namespace IdeaStatiCa.ConnectionApi
 		private async Task<string> CreateClientAsync()
 		{
 			Configuration configuration = new Configuration();
+			configuration.Timeout = Timeout.Infinite;
 			configuration.BasePath = BasePath.AbsoluteUri;
 
 			var clientApi = new ClientApi(configuration);
@@ -133,6 +139,7 @@ namespace IdeaStatiCa.ConnectionApi
 			this.Project = new ProjectApiExt(this, clientApi.Client, clientApi.AsynchronousClient, configuration);
 			this.Report = new ReportApiExt(clientApi.Client, clientApi.AsynchronousClient, configuration);
 			this.Template = new TemplateApiExt(clientApi.Client, clientApi.AsynchronousClient, configuration);
+			this.Conversion = new ConversionApi(clientApi.Client, clientApi.AsynchronousClient, configuration);
 
 			this.ClientApi = clientApi;
 			this.ClientId = clientId;
