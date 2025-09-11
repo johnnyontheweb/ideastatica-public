@@ -24,30 +24,26 @@ This endpoint does not need any parameter.
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def connect_clientExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ClientApi(api_client)
 
     try:
         # Connect a client to the ConnectionRestApi service. Method returns a unique identifier of the client.
-        api_response = api_instance.connect_client()
+        api_response = api_client.client.connect_client()
         print("The response of ClientApi->connect_client:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ClientApi->connect_client: %s\n" % e)
 ```
@@ -64,7 +60,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/clients/connect-client 
+> **GET** /api/2/clients/connect-client 
 
 ### Authorization
 
@@ -99,30 +95,26 @@ This endpoint does not need any parameter.
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_versionExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ClientApi(api_client)
 
     try:
         # Get the IdeaStatica version
-        api_response = api_instance.get_version()
+        api_response = api_client.client.get_version()
         print("The response of ClientApi->get_version:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ClientApi->get_version: %s\n" % e)
 ```
@@ -139,7 +131,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/clients/idea-service-version 
+> **GET** /api/2/clients/idea-service-version 
 
 ### Authorization
 

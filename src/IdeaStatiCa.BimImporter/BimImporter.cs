@@ -216,6 +216,26 @@ namespace IdeaStatiCa.BimImporter
 			return CreateModelBIM(objects, bimItems, countryCode);
 		}
 
+		/// <inheritdoc cref="IBimImporter.ImportMembers2D(CountryCode)"/>
+		public ModelBIM ImportMembers2D(CountryCode countryCode)
+		{
+			_remoteApp?.SendMessageLocalised(MessageSeverity.Info, LocalisedMessage.ImportDetails);
+			BulkSelection selection = InitBulkImport();
+
+			List<IBimItem> bimItems = new List<IBimItem>();
+
+			IEnumerable<IIdeaObject> objects = selection.Nodes
+				.Cast<IIdeaObject>()
+				.Concat(selection.Members);
+
+			if (selection.Members2D != null)
+			{
+				objects = objects.Concat(selection.Members2D);
+			}
+
+			return CreateModelBIM(objects, bimItems, countryCode);
+		}
+
 		/// <inheritdoc cref="IBimImporter.ImportSelected"/>
 		/// <exception cref="InvalidOperationException">Throws if <see cref="IIdeaModel.GetSingleSelection"/> returns null arguments.</exception>
 		public List<ModelBIM> ImportSelected(List<BIMItemsGroup> selected, CountryCode countryCode)
@@ -307,12 +327,34 @@ namespace IdeaStatiCa.BimImporter
 			}
 			else if (group.Type == RequestedItemsType.Substructure)
 			{
-				IEnumerable<Member> bimItems = group.Items
+				IEnumerable<Member> memberItems = group.Items
 					.Where(x => x.Type == BIMItemType.Member)
 					.Select(x => _project.GetBimObject(x.Id))
 					.Where(x => x != null)
 					.Cast<IIdeaMember1D>()
 					.Select(x => new Member(x));
+
+				IEnumerable<Detail> detailItems = group.Items
+					.Where(x => x.Type == BIMItemType.Detail)
+					.Select(x => _project.GetBimObject(x.Id))
+					.Where(x => x != null)
+					.Cast<IIdeaMember2D>()
+					.Select(x => new Detail(x));
+
+				IEnumerable<IBimItem> bimItems = memberItems
+					.Cast<IBimItem>()
+					.Concat(detailItems.Cast<IBimItem>());
+
+				return CreateModelBIM(Enumerable.Empty<IIdeaObject>(), bimItems, countryCode);
+			}			
+			else if (group.Type == RequestedItemsType.Members2D)
+			{ 
+				IEnumerable<Detail> bimItems = group.Items
+					.Where(x => x.Type == BIMItemType.Detail)
+					.Select(x => _project.GetBimObject(x.Id))
+					.Where(x => x != null)
+					.Cast<IIdeaMember2D>()
+					.Select(x => new Detail(x));
 
 				return CreateModelBIM(Enumerable.Empty<IIdeaObject>(), bimItems, countryCode);
 			}

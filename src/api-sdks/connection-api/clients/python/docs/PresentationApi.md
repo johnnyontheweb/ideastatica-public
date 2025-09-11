@@ -28,33 +28,29 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.draw_data import DrawData
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_data_scene3_dExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.PresentationApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the open project in the ConnectionRestApi service
     connection_id = 56 # int | Id of the connection to be presented to scene3D
 
     try:
         # Returns data for scene3D
-        api_response = api_instance.get_data_scene3_d(project_id, connection_id)
+        api_response = api_client.presentation.get_data_scene3_d(project_id, connection_id)
         print("The response of PresentationApi->get_data_scene3_d:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling PresentationApi->get_data_scene3_d: %s\n" % e)
 ```
@@ -71,7 +67,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections/{connectionId}/presentations 
+> **GET** /api/2/projects/{projectId}/connections/{connectionId}/presentations 
 
 ### Authorization
 
@@ -110,32 +106,28 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_data_scene3_d_textExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.PresentationApi(api_client)
     project_id = 'project_id_example' # str | 
     connection_id = 56 # int | 
 
     try:
         # Return serialized data for scene3D in json format
-        api_response = api_instance.get_data_scene3_d_text(project_id, connection_id)
+        api_response = api_client.presentation.get_data_scene3_d_text(project_id, connection_id)
         print("The response of PresentationApi->get_data_scene3_d_text:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling PresentationApi->get_data_scene3_d_text: %s\n" % e)
 ```
@@ -152,7 +144,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections/{connectionId}/presentations/text 
+> **GET** /api/2/projects/{projectId}/connections/{connectionId}/presentations/text 
 
 ### Authorization
 

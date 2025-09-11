@@ -35,31 +35,27 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def close_projectExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ProjectApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the project to be closed
 
     try:
         # Close the project. Needed for releasing resources in the service.
-        api_response = api_instance.close_project(project_id)
+        api_response = api_client.project.close_project(project_id)
         print("The response of ProjectApi->close_project:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ProjectApi->close_project: %s\n" % e)
 ```
@@ -76,7 +72,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/close 
+> **GET** /api/2/projects/{projectId}/close 
 
 ### Authorization
 
@@ -114,29 +110,24 @@ void (empty response body)
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def download_projectExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ProjectApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
 
     try:
         # Download the actual ideacon project from the service. It includes alle changes which were made by previous API calls.
-        api_instance.download_project(project_id)
+        api_client.project.download_project(project_id)
     except Exception as e:
         print("Exception when calling ProjectApi->download_project: %s\n" % e)
 ```
@@ -153,7 +144,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/download 
+> **GET** /api/2/projects/{projectId}/download 
 
 ### Authorization
 
@@ -188,31 +179,27 @@ This endpoint does not need any parameter.
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_project import ConProject
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_active_projectsExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ProjectApi(api_client)
 
     try:
         # Get the list of projects in the service which were opened by the client which was connected by M:IdeaStatiCa.ConnectionRestApi.Controllers.ClientController.ConnectClient
-        api_response = api_instance.get_active_projects()
+        api_response = api_client.project.get_active_projects()
         print("The response of ProjectApi->get_active_projects:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ProjectApi->get_active_projects: %s\n" % e)
 ```
@@ -229,7 +216,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects 
+> **GET** /api/2/projects 
 
 ### Authorization
 
@@ -267,32 +254,28 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_project import ConProject
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_project_dataExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ProjectApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the requested project
 
     try:
         # Get data of the project.
-        api_response = api_instance.get_project_data(project_id)
+        api_response = api_client.project.get_project_data(project_id)
         print("The response of ProjectApi->get_project_data:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ProjectApi->get_project_data: %s\n" % e)
 ```
@@ -309,7 +292,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId} 
+> **GET** /api/2/projects/{projectId} 
 
 ### Authorization
 
@@ -347,32 +330,28 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.connection_setup import ConnectionSetup
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_setupExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ProjectApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service to get setup
 
     try:
         # Get setup from project
-        api_response = api_instance.get_setup(project_id)
+        api_response = api_client.project.get_setup(project_id)
         print("The response of ProjectApi->get_setup:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ProjectApi->get_setup: %s\n" % e)
 ```
@@ -389,7 +368,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connection-setup 
+> **GET** /api/2/projects/{projectId}/connection-setup 
 
 ### Authorization
 
@@ -428,33 +407,29 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_project import ConProject
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def import_iomExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ProjectApi(api_client)
     container_xml_file = None # bytearray |  (optional)
     connections_to_create = [56] # List[int] |  (optional)
 
     try:
         # Create the IDEA Connection project from IOM provided in xml format.  The parameter 'containerXmlFile' passed in HTTP body represents :  <see href=\"https://github.com/idea-statica/ideastatica-public/blob/main/src/IdeaRS.OpenModel/OpenModelContainer.cs\">IdeaRS.OpenModel.OpenModelContainer</see>  which is serialized to XML string by  <see href=\"https://github.com/idea-statica/ideastatica-public/blob/main/src/IdeaRS.OpenModel/Tools.cs\">IdeaRS.OpenModel.Tools.OpenModelContainerToXml</see>
-        api_response = api_instance.import_iom(container_xml_file=container_xml_file, connections_to_create=connections_to_create)
+        api_response = api_client.project.import_iom(container_xml_file=container_xml_file, connections_to_create=connections_to_create)
         print("The response of ProjectApi->import_iom:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ProjectApi->import_iom: %s\n" % e)
 ```
@@ -471,7 +446,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **POST** /api/1/projects/import-iom-file 
+> **POST** /api/2/projects/import-iom-file 
 
 ### Authorization
 
@@ -509,32 +484,28 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_project import ConProject
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def open_projectExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ProjectApi(api_client)
     idea_con_file = None # bytearray |  (optional)
 
     try:
         # Open ideacon project from ideaConFile
-        api_response = api_instance.open_project(idea_con_file=idea_con_file)
+        api_response = api_client.project.open_project(idea_con_file=idea_con_file)
         print("The response of ProjectApi->open_project:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ProjectApi->open_project: %s\n" % e)
 ```
@@ -551,7 +522,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **POST** /api/1/projects/open 
+> **POST** /api/2/projects/open 
 
 ### Authorization
 
@@ -590,33 +561,29 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_project import ConProject
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def update_from_iomExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ProjectApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service to be updated
     container_xml_file = None # bytearray |  (optional)
 
     try:
         # Update the IDEA Connection project by <see href=\"https://github.com/idea-statica/ideastatica-public/blob/main/src/IdeaRS.OpenModel/OpenModelContainer.cs\">IdeaRS.OpenModel.OpenModelContainer</see>  (model and results).  IOM is passed in the body of the request as the xml string.  <see href=\"https://github.com/idea-statica/ideastatica-public/blob/main/src/IdeaRS.OpenModel/Tools.cs\">IdeaRS.OpenModel.Tools.OpenModelContainerToXml</see> should be used to generate the valid xml string
-        api_response = api_instance.update_from_iom(project_id, container_xml_file=container_xml_file)
+        api_response = api_client.project.update_from_iom(project_id, container_xml_file=container_xml_file)
         print("The response of ProjectApi->update_from_iom:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ProjectApi->update_from_iom: %s\n" % e)
 ```
@@ -633,7 +600,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **POST** /api/1/projects/{projectId}/update-iom-file 
+> **POST** /api/2/projects/{projectId}/update-iom-file 
 
 ### Authorization
 
@@ -672,7 +639,7 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_project import ConProject
@@ -680,26 +647,22 @@ from ideastatica_connection_api.models.con_project_data import ConProjectData
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def update_project_dataExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ProjectApi(api_client)
     project_id = 'project_id_example' # str | 
     con_project_data = ideastatica_connection_api.ConProjectData() # ConProjectData |  (optional)
 
     try:
         # Updates ConProjectData of project
-        api_response = api_instance.update_project_data(project_id, con_project_data=con_project_data)
+        api_response = api_client.project.update_project_data(project_id, con_project_data=con_project_data)
         print("The response of ProjectApi->update_project_data:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ProjectApi->update_project_data: %s\n" % e)
 ```
@@ -716,7 +679,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **PUT** /api/1/projects/{projectId} 
+> **PUT** /api/2/projects/{projectId} 
 
 ### Authorization
 
@@ -755,33 +718,29 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.connection_setup import ConnectionSetup
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def update_setupExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ProjectApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service to update project setup
     connection_setup = ideastatica_connection_api.ConnectionSetup() # ConnectionSetup |  (optional)
 
     try:
         # Update setup of the project
-        api_response = api_instance.update_setup(project_id, connection_setup=connection_setup)
+        api_response = api_client.project.update_setup(project_id, connection_setup=connection_setup)
         print("The response of ProjectApi->update_setup:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ProjectApi->update_setup: %s\n" % e)
 ```
@@ -798,7 +757,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **PUT** /api/1/projects/{projectId}/connection-setup 
+> **PUT** /api/2/projects/{projectId}/connection-setup 
 
 ### Authorization
 

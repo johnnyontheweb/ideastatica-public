@@ -11,7 +11,7 @@ Method | Description
 
 <a id="export_ifc"></a>
 # **export_ifc**
-> export_ifc(project_id, connection_id)
+> str export_ifc(project_id, connection_id)
 
 Export connection to IFC format
 
@@ -25,34 +25,32 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-void (empty response body)
+**str**
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def export_ifcExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ExportApi(api_client)
     project_id = 'project_id_example' # str | 
     connection_id = 56 # int | 
 
     try:
         # Export connection to IFC format
-        api_instance.export_ifc(project_id, connection_id)
+        api_response = api_client.export.export_ifc(project_id, connection_id)
+        print("The response of ExportApi->export_ifc:\n")
+        pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ExportApi->export_ifc: %s\n" % e)
 ```
@@ -69,7 +67,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections/{connectionId}/export-ifc 
+> **GET** /api/2/projects/{projectId}/connections/{connectionId}/export-ifc 
 
 ### Authorization
 
@@ -78,7 +76,7 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: Not defined
+ - **Accept**: text/plain
 
 ### HTTP response details
 
@@ -90,7 +88,7 @@ No authorization required
 
 <a id="export_iom"></a>
 # **export_iom**
-> export_iom(project_id, connection_id, version=version)
+> str export_iom(project_id, connection_id, version=version)
 
 Export connection to XML which includes https://github.com/idea-statica/ideastatica-public/blob/main/src/IdeaRS.OpenModel/OpenModelContainer.cs
 
@@ -105,35 +103,33 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-void (empty response body)
+**str**
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def export_iomExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ExportApi(api_client)
     project_id = 'project_id_example' # str | 
     connection_id = 56 # int | 
     version = 'version_example' # str |  (optional)
 
     try:
         # Export connection to XML which includes https://github.com/idea-statica/ideastatica-public/blob/main/src/IdeaRS.OpenModel/OpenModelContainer.cs
-        api_instance.export_iom(project_id, connection_id, version=version)
+        api_response = api_client.export.export_iom(project_id, connection_id, version=version)
+        print("The response of ExportApi->export_iom:\n")
+        pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ExportApi->export_iom: %s\n" % e)
 ```
@@ -150,7 +146,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections/{connectionId}/export-iom 
+> **GET** /api/2/projects/{projectId}/connections/{connectionId}/export-iom 
 
 ### Authorization
 
@@ -159,7 +155,7 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: Not defined
+ - **Accept**: application/xml, text/plain
 
 ### HTTP response details
 
@@ -189,33 +185,29 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.connection_data import ConnectionData
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def export_iom_connection_dataExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ExportApi(api_client)
     project_id = 'project_id_example' # str | 
     connection_id = 56 # int | 
 
     try:
         # Get https://github.com/idea-statica/ideastatica-public/blob/main/src/IdeaRS.OpenModel/Connection/ConnectionData.cs for required connection
-        api_response = api_instance.export_iom_connection_data(project_id, connection_id)
+        api_response = api_client.export.export_iom_connection_data(project_id, connection_id)
         print("The response of ExportApi->export_iom_connection_data:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ExportApi->export_iom_connection_data: %s\n" % e)
 ```
@@ -232,7 +224,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections/{connectionId}/export-iom-connection-data 
+> **GET** /api/2/projects/{projectId}/connections/{connectionId}/export-iom-connection-data 
 
 ### Authorization
 

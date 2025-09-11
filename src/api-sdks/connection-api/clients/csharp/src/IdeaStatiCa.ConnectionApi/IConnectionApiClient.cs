@@ -1,27 +1,26 @@
-﻿using IdeaStatiCa.ConnectionApi.Api;
-using IdeaStatiCa.ConnectionApi.Model;
+﻿using IdeaStatiCa.Api.Common;
+using IdeaStatiCa.ConnectionApi.Api;
 using System;
-using System.Threading.Tasks;
 
 namespace IdeaStatiCa.ConnectionApi
 {
 	/// <summary>
 	/// Client for accessing IdeaStatiCa.ConnectionRestApi
 	/// </summary>
-	public interface IConnectionApiClient : IDisposable
+	public interface IConnectionApiClient : IApiClient
 #if NETSTANDARD2_1_OR_GREATER
 		, IAsyncDisposable
 #endif
 	{
 		/// <summary>
-		/// ClientID - assigned by the service
-		/// </summary>
-		string ClientId { get; }
-
-		/// <summary>
 		/// Id of the actively open project on the service side
 		/// </summary>
 		Guid ActiveProjectId { get; }
+
+		/// <summary>
+		/// Get unique identifier for the client
+		/// </summary>
+		string ClientId { get; }
 
 		/// <summary>
 		/// Get Client API. 
@@ -94,9 +93,8 @@ namespace IdeaStatiCa.ConnectionApi
 		IConversionApiAsync Conversion { get; }
 
 		/// <summary>
-		/// 
+		/// Get Settings API
 		/// </summary>
-		/// <returns></returns>
-		Task CreateAsync();
+		ISettingsApiAsync Settings { get; }
 	}
 }

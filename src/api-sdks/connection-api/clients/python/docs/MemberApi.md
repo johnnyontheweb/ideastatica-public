@@ -31,34 +31,30 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_member import ConMember
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_memberExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.MemberApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
     connection_id = 56 # int | Id of the connection to get its member
     member_id = 56 # int | Id of the requested member in the connection
 
     try:
         # Get information about the requires member in the connection
-        api_response = api_instance.get_member(project_id, connection_id, member_id)
+        api_response = api_client.member.get_member(project_id, connection_id, member_id)
         print("The response of MemberApi->get_member:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling MemberApi->get_member: %s\n" % e)
 ```
@@ -75,7 +71,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections/{connectionId}/members/{memberId} 
+> **GET** /api/2/projects/{projectId}/connections/{connectionId}/members/{memberId} 
 
 ### Authorization
 
@@ -114,33 +110,29 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_member import ConMember
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_membersExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.MemberApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
     connection_id = 56 # int | Id of the connection to get its members
 
     try:
         # Get information about all members in the connection
-        api_response = api_instance.get_members(project_id, connection_id)
+        api_response = api_client.member.get_members(project_id, connection_id)
         print("The response of MemberApi->get_members:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling MemberApi->get_members: %s\n" % e)
 ```
@@ -157,7 +149,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections/{connectionId}/members 
+> **GET** /api/2/projects/{projectId}/connections/{connectionId}/members 
 
 ### Authorization
 
@@ -197,34 +189,30 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_member import ConMember
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def set_bearing_memberExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.MemberApi(api_client)
     project_id = 'project_id_example' # str | 
     connection_id = 56 # int | 
     member_id = 56 # int | 
 
     try:
         # Set bearing member for memberIt
-        api_response = api_instance.set_bearing_member(project_id, connection_id, member_id)
+        api_response = api_client.member.set_bearing_member(project_id, connection_id, member_id)
         print("The response of MemberApi->set_bearing_member:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling MemberApi->set_bearing_member: %s\n" % e)
 ```
@@ -241,7 +229,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **PUT** /api/1/projects/{projectId}/connections/{connectionId}/members/{memberId}/set-bearing-member 
+> **PUT** /api/2/projects/{projectId}/connections/{connectionId}/members/{memberId}/set-bearing-member 
 
 ### Authorization
 
@@ -281,34 +269,30 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_member import ConMember
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def update_memberExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.MemberApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
     connection_id = 56 # int | Id of the connection to to update is member newMemberData
     con_member = ideastatica_connection_api.ConMember() # ConMember | New member data (optional)
 
     try:
         # Update the member in the connection by newMemberData
-        api_response = api_instance.update_member(project_id, connection_id, con_member=con_member)
+        api_response = api_client.member.update_member(project_id, connection_id, con_member=con_member)
         print("The response of MemberApi->update_member:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling MemberApi->update_member: %s\n" % e)
 ```
@@ -325,7 +309,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **PUT** /api/1/projects/{projectId}/connections/{connectionId}/members 
+> **PUT** /api/2/projects/{projectId}/connections/{connectionId}/members 
 
 ### Authorization
 

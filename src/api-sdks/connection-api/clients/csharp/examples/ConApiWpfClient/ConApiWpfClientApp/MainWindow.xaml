@@ -12,6 +12,7 @@
 			<ToolBar Band="1">
 				<Button Command="{Binding ConnectCommand, Mode=OneWay}">Start service</Button>
 				<Button Command="{Binding OpenProjectCommand, Mode=OneWay}">Open Project</Button>
+				<Button Command="{Binding ImportIomCommand, Mode=OneWay}">Import IOM</Button>
 				<Button Command="{Binding CloseProjectCommand, Mode=OneWay}">Close Project</Button>
 				<Button Command="{Binding DownloadProjectCommand, Mode=OneWay}">Download</Button>
 				<!--<Button Command="{Binding ShowClientUICommand, Mode=OneWay}">Show Client UI</Button>-->
@@ -21,16 +22,30 @@
 				</CheckBox>
 			</ToolBar>
 
+			<ToolBar Band="1">
+				<Button Command="{Binding ShowLogsCommand, Mode=OneWay}" ToolTip="Show IdeaStatiCa logs in 'File Explorer'">Logs</Button>
+				<Button Command="{Binding EditDiagnosticsCommand, Mode=OneWay}" ToolTip="Edit 'IdeaDiagnostics.config' in Notepad">Diagnostics</Button>
+			</ToolBar>
+	
+
 			<ToolBar Band="2">
 				<Button Command="{Binding CalculationCommand, Mode=OneWay}">Calculate</Button>
+				<ComboBox ItemsSource="{Binding AvailableAnalysisTypes}" SelectedItem="{Binding SelectedAnalysisType, Mode=TwoWay}" MinWidth="120"/>
 				<Button Command="{Binding CreateTemplateCommand, Mode=OneWay}">Create template</Button>
 				<Button Command="{Binding ApplyTemplateCommand, Mode=OneWay}">Apply template</Button>
-				<!--<Button Command="{Binding GetSceneDataCommand, Mode=OneWay}">Scene3D Data</Button>-->
+				<Button Command="{Binding GetOperationsCommand, Mode=OneWay}">Get Operations </Button>
+				<Button Command="{Binding GenerateReportCommand, Mode=OneWay}" CommandParameter="pdf">Report PDF</Button>
+				<Button Command="{Binding GenerateReportCommand, Mode=OneWay}" CommandParameter="docx">Report Word</Button>
+				<Button Command="{Binding ExportCommand, Mode=OneWay}" CommandParameter="iom" ToolTip="Export selected connection to IdeaOpenModel">Export IOM</Button>
+				<Button Command="{Binding ExportCommand, Mode=OneWay}" CommandParameter="ifc" ToolTip="Export selected connection to IdeaOpenModel">Export IFC</Button>
+				<Button Command="{Binding GetTopologyCommand, Mode=OneWay}">Get topology</Button>
+				<Button Command="{Binding GetSceneDataCommand, Mode=OneWay}">Scene3D Data</Button>
 			</ToolBar>
 		</ToolBarTray>
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition></ColumnDefinition>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition></ColumnDefinition>
 			</Grid.ColumnDefinitions>
 			<ListView  Grid.Row="0" ItemsSource="{Binding Connections}" SelectedItem="{Binding SelectedConnection, Mode=TwoWay}" Grid.Column="0" >
@@ -53,10 +68,34 @@
 					</GridView>
 				</ListView.View>
 			</ListView>
-			<Grid  Grid.Column="1">
+
+			<GridSplitter HorizontalAlignment="Center"
+										VerticalAlignment="Stretch"
+										Grid.Column="1"
+										Width="5">
+			</GridSplitter>
+
+			<Grid  Grid.Column="2">
+				<Grid.RowDefinitions>
+					<RowDefinition></RowDefinition>
+					<RowDefinition Height="Auto"></RowDefinition>
+					<RowDefinition></RowDefinition>
+				</Grid.RowDefinitions>
+
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<TextBox Text="{Binding OutputText, Mode=TwoWay}"></TextBox>
 				</ScrollViewer>
+
+				<GridSplitter HorizontalAlignment="Stretch"
+										VerticalAlignment="Center"
+										Grid.Row="1"
+										Height="5">
+				</GridSplitter>
+
+				<Grid Grid.Row="2" x:Name="Scene3DHostControl">
+					
+				</Grid>
+				
 			</Grid>
 		</Grid>
 	</DockPanel>

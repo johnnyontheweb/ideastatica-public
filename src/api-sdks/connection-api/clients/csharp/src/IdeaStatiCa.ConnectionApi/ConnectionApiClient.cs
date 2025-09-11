@@ -18,9 +18,6 @@ namespace IdeaStatiCa.ConnectionApi
 		/// </summary>
 		public Uri BasePath { get; private set; }
 
-		/// <inheritdoc cref="IConnectionApiClient.ClientId"/>/>
-		public string ClientId { get; private set; }
-
 		/// <inheritdoc cref="IConnectionApiClient.ActiveProjectId"/>/>
 		public Guid ActiveProjectId
 		{
@@ -68,6 +65,12 @@ namespace IdeaStatiCa.ConnectionApi
 		/// <inheritdoc cref="IConnectionApiClient.Conversion"/>
 		public IConversionApiAsync Conversion { get; private set; }
 
+		/// <inheritdoc cref="IConnectionApiClient.Settings"/>
+		public ISettingsApiAsync Settings { get; private set; }
+
+		/// <inheritdoc cref="IConnectionApiClient.ClientId"/>
+		public string ClientId { get; private set; }
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -94,7 +97,7 @@ namespace IdeaStatiCa.ConnectionApi
 
 		private async Task CloseAsync()
 		{
-			if(Project != null && ActiveProjectId != Guid.Empty)
+			if (Project != null && ActiveProjectId != Guid.Empty)
 			{
 				await Project.CloseProjectAsync(ActiveProjectId);
 			}
@@ -113,7 +116,7 @@ namespace IdeaStatiCa.ConnectionApi
 			this.Template = null;
 			this.Conversion = null;
 			this.ClientApi = null;
-			this.ClientId = string.Empty;
+			this.Settings = null;
 
 		}
 
@@ -124,8 +127,8 @@ namespace IdeaStatiCa.ConnectionApi
 			configuration.BasePath = BasePath.AbsoluteUri;
 
 			var clientApi = new ClientApi(configuration);
-			string clientId = await clientApi.ConnectClientAsync();
-			configuration.DefaultHeaders.Add("ClientId", clientId);
+			ClientId = await clientApi.ConnectClientAsync();
+			configuration.DefaultHeaders.Add("ClientId", ClientId);
 
 			this.Calculation = new CalculationApi(clientApi.Client, clientApi.AsynchronousClient, configuration);
 			this.Connection = new IdeaStatiCa.ConnectionApi.Api.ConnectionApi(clientApi.Client, clientApi.AsynchronousClient, configuration);
@@ -140,10 +143,10 @@ namespace IdeaStatiCa.ConnectionApi
 			this.Report = new ReportApiExt(clientApi.Client, clientApi.AsynchronousClient, configuration);
 			this.Template = new TemplateApiExt(clientApi.Client, clientApi.AsynchronousClient, configuration);
 			this.Conversion = new ConversionApi(clientApi.Client, clientApi.AsynchronousClient, configuration);
+			this.Settings = new SettingsApi(clientApi.Client, clientApi.AsynchronousClient, configuration);
 
 			this.ClientApi = clientApi;
-			this.ClientId = clientId;
-			return clientId;
+			return ClientId;
 		}
 
 		protected virtual void Dispose(bool disposing)

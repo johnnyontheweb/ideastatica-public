@@ -2,14 +2,14 @@
 
 | Method  | Description |
 |--------|-------------|
-| [**ClearParameters**](ParameterApi.md#clearparameters) | Clear parameters and links for the connection connectionId in the project projectId |
-| [**EvaluateExpression**](ParameterApi.md#evaluateexpression) | Evaluate the expression and return the result |
-| [**GetParameters**](ParameterApi.md#getparameters) | Get all parameters which are defined for projectId and connectionId |
-| [**UpdateParameters**](ParameterApi.md#updateparameters) | Update parameters for the connection connectionId in the project projectId by values passed in parameters |
+| [**ClearParametersAsync**](ParameterApi.md#clearparametersasync) | Clear parameters and links for the connection connectionId in the project projectId |
+| [**EvaluateExpressionAsync**](ParameterApi.md#evaluateexpressionasync) | Evaluate the expression and return the result |
+| [**GetParametersAsync**](ParameterApi.md#getparametersasync) | Get all parameters which are defined for projectId and connectionId |
+| [**UpdateAsync**](ParameterApi.md#updateasync) | Update parameters for the connection connectionId in the project projectId by values passed in parameters |
 
 <a id="clearparameters"></a>
-## **ClearParameters**
-> **void ClearParameters (Guid projectId, int connectionId)**
+## **ClearParametersAsync**
+> **void ClearParametersAsync (Guid projectId, int connectionId)**
 
 Clear parameters and links for the connection connectionId in the project projectId
 
@@ -40,33 +40,41 @@ using IdeaStatiCa.ConnectionApi.Model;
 
 namespace Example
 {
-    public class ClearParametersExample
+    public class ClearParametersAsyncExample
     {
-        public static void Main()
+        public static async Task Main()
         {
-            // Create the client which is connected to the service.
-            ConnectionApiClientFactory clientFactory = new ConnectionApiClientFactory("http://localhost:5000");
-            using (var conClient = await clientFactory.CreateConnectionApiClient())
+            string ideaConFile = "testCon.ideaCon";
+            
+            string ideaStatiCaPath = "C:\\Program Files\\IDEA StatiCa\\StatiCa 25.0"; // Path to the IdeaStatiCa.ConnectionRestApi.exe
+            
+            using (var clientFactory = new ConnectionApiServiceRunner(ideaStatiCaPath))
             {
-                var project = await conClient.Project.Open("myProject.ideaCon"); //Open a project
-                Guid projectId = project.ProjectId; //Get projectId Guid
-                
-                connectionId = 56;  // int | Id of the connection where to clear the parameters
+                using (var conClient = await clientFactory.CreateApiClient())
+                {
 
-                try
-                {
-                    // Clear parameters and links for the connection connectionId in the project projectId
-                    conClient.Parameter.ClearParameters(projectId, connectionId);
-                }
-                catch (ApiException  e)
-                {
-                    Console.WriteLine("Exception when calling Parameter.ClearParameters: " + e.Message);
-                    Console.WriteLine("Status Code: " + e.ErrorCode);
-                    Console.WriteLine(e.StackTrace);
-                }
-                finally
-                {
-                    await conClient.Project.CloseProjectAsync(projectId);
+                    // Open the project and get its id
+                    var projData = await conClient.Project.OpenProjectAsync(ideaConFile);
+                    Guid projectId = projData.ProjectId;
+                    
+                    // (Required) Select parameters
+                    connectionId = 56;  // int | Id of the connection where to clear the parameters
+
+                    try
+                    {
+                        // Clear parameters and links for the connection connectionId in the project projectId
+                        conClient.Parameter.ClearParametersAsync(projectId, connectionId);
+                    }
+                    catch (ApiException  e)
+                    {
+                        Console.WriteLine("Exception when calling Parameter.ClearParametersAsync: " + e.Message);
+                        Console.WriteLine("Status Code: " + e.ErrorCode);
+                        Console.WriteLine(e.StackTrace);
+                    }
+                    finally
+                    {
+                        await conClient.Project.CloseProjectAsync(projectId);
+                    }
                 }
             }
         }
@@ -86,7 +94,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **POST** /api/1/projects/{projectId}/connections/{connectionId}/clear-parameters 
+> **POST** /api/2/projects/{projectId}/connections/{connectionId}/clear-parameters 
 
 #### Using the ClearParametersWithHttpInfo variant
 This returns an ApiResponse object which contains the response data, status code and headers.
@@ -123,8 +131,8 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 <a id="evaluateexpression"></a>
-## **EvaluateExpression**
-> **string EvaluateExpression (Guid projectId, int connectionId, string body = null)**
+## **EvaluateExpressionAsync**
+> **string EvaluateExpressionAsync (Guid projectId, int connectionId, string body = null)**
 
 Evaluate the expression and return the result
 
@@ -156,35 +164,43 @@ using IdeaStatiCa.ConnectionApi.Model;
 
 namespace Example
 {
-    public class EvaluateExpressionExample
+    public class EvaluateExpressionAsyncExample
     {
-        public static void Main()
+        public static async Task Main()
         {
-            // Create the client which is connected to the service.
-            ConnectionApiClientFactory clientFactory = new ConnectionApiClientFactory("http://localhost:5000");
-            using (var conClient = await clientFactory.CreateConnectionApiClient())
+            string ideaConFile = "testCon.ideaCon";
+            
+            string ideaStatiCaPath = "C:\\Program Files\\IDEA StatiCa\\StatiCa 25.0"; // Path to the IdeaStatiCa.ConnectionRestApi.exe
+            
+            using (var clientFactory = new ConnectionApiServiceRunner(ideaStatiCaPath))
             {
-                var project = await conClient.Project.Open("myProject.ideaCon"); //Open a project
-                Guid projectId = project.ProjectId; //Get projectId Guid
-                
-                connectionId = 56;  // int | Id of the connection to use for evaluation expression
-                body = "body_example";  // string | Expression to evaluate (optional) 
+                using (var conClient = await clientFactory.CreateApiClient())
+                {
 
-                try
-                {
-                    // Evaluate the expression and return the result
-                    string result = conClient.Parameter.EvaluateExpression(projectId, connectionId, body);
-                    Debug.WriteLine(result);
-                }
-                catch (ApiException  e)
-                {
-                    Console.WriteLine("Exception when calling Parameter.EvaluateExpression: " + e.Message);
-                    Console.WriteLine("Status Code: " + e.ErrorCode);
-                    Console.WriteLine(e.StackTrace);
-                }
-                finally
-                {
-                    await conClient.Project.CloseProjectAsync(projectId);
+                    // Open the project and get its id
+                    var projData = await conClient.Project.OpenProjectAsync(ideaConFile);
+                    Guid projectId = projData.ProjectId;
+                    
+                    // (Required) Select parameters
+                    connectionId = 56;  // int | Id of the connection to use for evaluation expression
+                    body = "body_example";  // string | Expression to evaluate (optional) 
+
+                    try
+                    {
+                        // Evaluate the expression and return the result
+                        string result = await conClient.Parameter.EvaluateExpressionAsync(projectId, connectionId, body);
+                        Debug.WriteLine(result);
+                    }
+                    catch (ApiException  e)
+                    {
+                        Console.WriteLine("Exception when calling Parameter.EvaluateExpressionAsync: " + e.Message);
+                        Console.WriteLine("Status Code: " + e.ErrorCode);
+                        Console.WriteLine(e.StackTrace);
+                    }
+                    finally
+                    {
+                        await conClient.Project.CloseProjectAsync(projectId);
+                    }
                 }
             }
         }
@@ -204,7 +220,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **POST** /api/1/projects/{projectId}/connections/{connectionId}/evaluate-expression 
+> **POST** /api/2/projects/{projectId}/connections/{connectionId}/evaluate-expression 
 
 #### Using the EvaluateExpressionWithHttpInfo variant
 This returns an ApiResponse object which contains the response data, status code and headers.
@@ -244,8 +260,8 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 <a id="getparameters"></a>
-## **GetParameters**
-> **List&lt;IdeaParameter&gt; GetParameters (Guid projectId, int connectionId, bool? includeHidden = null)**
+## **GetParametersAsync**
+> **List&lt;IdeaParameter&gt; GetParametersAsync (Guid projectId, int connectionId, bool? includeHidden = null)**
 
 Get all parameters which are defined for projectId and connectionId
 
@@ -277,35 +293,43 @@ using IdeaStatiCa.ConnectionApi.Model;
 
 namespace Example
 {
-    public class GetParametersExample
+    public class GetParametersAsyncExample
     {
-        public static void Main()
+        public static async Task Main()
         {
-            // Create the client which is connected to the service.
-            ConnectionApiClientFactory clientFactory = new ConnectionApiClientFactory("http://localhost:5000");
-            using (var conClient = await clientFactory.CreateConnectionApiClient())
+            string ideaConFile = "testCon.ideaCon";
+            
+            string ideaStatiCaPath = "C:\\Program Files\\IDEA StatiCa\\StatiCa 25.0"; // Path to the IdeaStatiCa.ConnectionRestApi.exe
+            
+            using (var clientFactory = new ConnectionApiServiceRunner(ideaStatiCaPath))
             {
-                var project = await conClient.Project.Open("myProject.ideaCon"); //Open a project
-                Guid projectId = project.ProjectId; //Get projectId Guid
-                
-                connectionId = 56;  // int | Id of the connection to get its parameters
-                includeHidden = false;  // bool? | Include also hidden parameters (optional)  (default to false)
+                using (var conClient = await clientFactory.CreateApiClient())
+                {
 
-                try
-                {
-                    // Get all parameters which are defined for projectId and connectionId
-                    List<IdeaParameter> result = conClient.Parameter.GetParameters(projectId, connectionId, includeHidden);
-                    Debug.WriteLine(result);
-                }
-                catch (ApiException  e)
-                {
-                    Console.WriteLine("Exception when calling Parameter.GetParameters: " + e.Message);
-                    Console.WriteLine("Status Code: " + e.ErrorCode);
-                    Console.WriteLine(e.StackTrace);
-                }
-                finally
-                {
-                    await conClient.Project.CloseProjectAsync(projectId);
+                    // Open the project and get its id
+                    var projData = await conClient.Project.OpenProjectAsync(ideaConFile);
+                    Guid projectId = projData.ProjectId;
+                    
+                    // (Required) Select parameters
+                    connectionId = 56;  // int | Id of the connection to get its parameters
+                    includeHidden = false;  // bool? | Include also hidden parameters (optional)  (default to false)
+
+                    try
+                    {
+                        // Get all parameters which are defined for projectId and connectionId
+                        List<IdeaParameter> result = await conClient.Parameter.GetParametersAsync(projectId, connectionId, includeHidden);
+                        Debug.WriteLine(result);
+                    }
+                    catch (ApiException  e)
+                    {
+                        Console.WriteLine("Exception when calling Parameter.GetParametersAsync: " + e.Message);
+                        Console.WriteLine("Status Code: " + e.ErrorCode);
+                        Console.WriteLine(e.StackTrace);
+                    }
+                    finally
+                    {
+                        await conClient.Project.CloseProjectAsync(projectId);
+                    }
                 }
             }
         }
@@ -325,7 +349,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections/{connectionId}/parameters 
+> **GET** /api/2/projects/{projectId}/connections/{connectionId}/parameters 
 
 #### Using the GetParametersWithHttpInfo variant
 This returns an ApiResponse object which contains the response data, status code and headers.
@@ -364,9 +388,9 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-<a id="updateparameters"></a>
-## **UpdateParameters**
-> **List&lt;IdeaParameter&gt; UpdateParameters (Guid projectId, int connectionId, List<IdeaParameterUpdate> ideaParameterUpdate = null)**
+<a id="update"></a>
+## **UpdateAsync**
+> **ParameterUpdateResponse UpdateAsync (Guid projectId, int connectionId, List<IdeaParameterUpdate> ideaParameterUpdate = null)**
 
 Update parameters for the connection connectionId in the project projectId by values passed in parameters
 
@@ -382,7 +406,7 @@ Update parameters for the connection connectionId in the project projectId by va
 
 ### Return type
 
-[**List&lt;IdeaParameter&gt;**](IdeaParameter.md)
+[**ParameterUpdateResponse**](ParameterUpdateResponse.md)
 
 ### Example
 
@@ -398,35 +422,43 @@ using IdeaStatiCa.ConnectionApi.Model;
 
 namespace Example
 {
-    public class UpdateParametersExample
+    public class UpdateAsyncExample
     {
-        public static void Main()
+        public static async Task Main()
         {
-            // Create the client which is connected to the service.
-            ConnectionApiClientFactory clientFactory = new ConnectionApiClientFactory("http://localhost:5000");
-            using (var conClient = await clientFactory.CreateConnectionApiClient())
+            string ideaConFile = "testCon.ideaCon";
+            
+            string ideaStatiCaPath = "C:\\Program Files\\IDEA StatiCa\\StatiCa 25.0"; // Path to the IdeaStatiCa.ConnectionRestApi.exe
+            
+            using (var clientFactory = new ConnectionApiServiceRunner(ideaStatiCaPath))
             {
-                var project = await conClient.Project.Open("myProject.ideaCon"); //Open a project
-                Guid projectId = project.ProjectId; //Get projectId Guid
-                
-                connectionId = 56;  // int | Id of the connection to apply template
-                var ideaParameterUpdate = new List<IdeaParameterUpdate>(); // List<IdeaParameterUpdate> | New values of parameters (optional) 
+                using (var conClient = await clientFactory.CreateApiClient())
+                {
 
-                try
-                {
-                    // Update parameters for the connection connectionId in the project projectId by values passed in parameters
-                    List<IdeaParameter> result = conClient.Parameter.UpdateParameters(projectId, connectionId, ideaParameterUpdate);
-                    Debug.WriteLine(result);
-                }
-                catch (ApiException  e)
-                {
-                    Console.WriteLine("Exception when calling Parameter.UpdateParameters: " + e.Message);
-                    Console.WriteLine("Status Code: " + e.ErrorCode);
-                    Console.WriteLine(e.StackTrace);
-                }
-                finally
-                {
-                    await conClient.Project.CloseProjectAsync(projectId);
+                    // Open the project and get its id
+                    var projData = await conClient.Project.OpenProjectAsync(ideaConFile);
+                    Guid projectId = projData.ProjectId;
+                    
+                    // (Required) Select parameters
+                    connectionId = 56;  // int | Id of the connection to apply template
+                    var ideaParameterUpdate = new List<IdeaParameterUpdate>(); // List<IdeaParameterUpdate> | New values of parameters (optional) 
+
+                    try
+                    {
+                        // Update parameters for the connection connectionId in the project projectId by values passed in parameters
+                        ParameterUpdateResponse result = await conClient.Parameter.UpdateAsync(projectId, connectionId, ideaParameterUpdate);
+                        Debug.WriteLine(result);
+                    }
+                    catch (ApiException  e)
+                    {
+                        Console.WriteLine("Exception when calling Parameter.UpdateAsync: " + e.Message);
+                        Console.WriteLine("Status Code: " + e.ErrorCode);
+                        Console.WriteLine(e.StackTrace);
+                    }
+                    finally
+                    {
+                        await conClient.Project.CloseProjectAsync(projectId);
+                    }
                 }
             }
         }
@@ -436,7 +468,7 @@ namespace Example
 
 ### Code Samples
 
-[!code-csharp[](../examples/CodeSamples/Samples/UpdateParameters.cs)]
+[!code-csharp[](../examples/CodeSamples/Samples/Update.cs)]
 
 Looking for a code sample? request some help on our [discussion](https://github.com/idea-statica/ideastatica-public/discussions) page. 
 
@@ -446,23 +478,23 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **PUT** /api/1/projects/{projectId}/connections/{connectionId}/parameters 
+> **PUT** /api/2/projects/{projectId}/connections/{connectionId}/parameters 
 
-#### Using the UpdateParametersWithHttpInfo variant
+#### Using the UpdateWithHttpInfo variant
 This returns an ApiResponse object which contains the response data, status code and headers.
 
 ```csharp
 try
 {
     // Update parameters for the connection connectionId in the project projectId by values passed in parameters
-    ApiResponse<List<IdeaParameter>> response = conClient.Parameter.UpdateParametersWithHttpInfo(projectId, connectionId, ideaParameterUpdate);
+    ApiResponse<ParameterUpdateResponse> response = conClient.Parameter.UpdateWithHttpInfo(projectId, connectionId, ideaParameterUpdate);
     Debug.Write("Status Code: " + response.StatusCode);
     Debug.Write("Response Headers: " + response.Headers);
     Debug.Write("Response Body: " + response.Data);
 }
 catch (ApiException e)
 {
-    Debug.Print("Exception when calling ParameterApi.UpdateParametersWithHttpInfo: " + e.Message);
+    Debug.Print("Exception when calling ParameterApi.UpdateWithHttpInfo: " + e.Message);
     Debug.Print("Status Code: " + e.ErrorCode);
     Debug.Print(e.StackTrace);
 }

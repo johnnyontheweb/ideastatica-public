@@ -10,12 +10,12 @@ info:
     name: IDEA StatiCa License
     url: https://github.com/idea-statica/ideastatica-public/blob/main/LICENSE
   termsOfService: https://www.ideastatica.com/end-user-license-agreement
-  title: Connection Rest API 1.0
-  version: "1.0"
+  title: Connection Rest API 2.0
+  version: "2.0"
 servers:
 - url: /
 paths:
-  /api/1/projects/{projectId}/connections/calculate:
+  /api/2/projects/{projectId}/connections/calculate:
     post:
       operationId: Calculate
       parameters:
@@ -35,6 +35,7 @@ paths:
             schema:
               $ref: '#/components/schemas/ConCalculationParameter'
         description: List of connections to calculate and a type of CBFEM analysis
+        required: true
       responses:
         "200":
           content:
@@ -49,7 +50,7 @@ paths:
       - Calculation
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/{projectId}/connections/results:
+  /api/2/projects/{projectId}/connections/results:
     post:
       operationId: GetResults
       parameters:
@@ -83,7 +84,7 @@ paths:
       - Calculation
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/{projectId}/connections/rawresults-text:
+  /api/2/projects/{projectId}/connections/rawresults-text:
     post:
       operationId: GetRawJsonResults
       parameters:
@@ -118,7 +119,7 @@ paths:
       - Calculation
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/clients/connect-client:
+  /api/2/clients/connect-client:
     get:
       operationId: ConnectClient
       responses:
@@ -137,7 +138,7 @@ paths:
       - Client
       x-requiresProject: false
       x-requiresConnection: false
-  /api/1/clients/idea-service-version:
+  /api/2/clients/idea-service-version:
     get:
       operationId: GetVersion
       responses:
@@ -152,7 +153,7 @@ paths:
       - Client
       x-requiresProject: false
       x-requiresConnection: false
-  /api/1/projects/{projectId}/connections:
+  /api/2/projects/{projectId}/connections:
     get:
       operationId: GetConnections
       parameters:
@@ -180,7 +181,7 @@ paths:
       - Connection
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/{projectId}/connections/{connectionId}:
+  /api/2/projects/{projectId}/connections/{connectionId}:
     get:
       operationId: GetConnection
       parameters:
@@ -255,7 +256,7 @@ paths:
       - Connection
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/production-cost:
+  /api/2/projects/{projectId}/connections/{connectionId}/production-cost:
     get:
       operationId: GetProductionCost
       parameters:
@@ -290,11 +291,12 @@ paths:
       - Connection
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/get-default-mapping:
+  /api/2/projects/{projectId}/get-default-mapping:
     get:
       operationId: GetConversionMapping
       parameters:
-      - description: ""
+      - description: The unique identifier of the opened project in the ConnectionRestApi
+          service. (only ECEN design code is supported)
         explode: false
         in: path
         name: projectId
@@ -303,7 +305,7 @@ paths:
           format: uuid
           type: string
         style: simple
-      - description: ""
+      - description: Requested design code in the converted project.
         explode: true
         in: query
         name: countryCode
@@ -318,16 +320,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConConversionSettings'
           description: Success
-      summary: Get default conversions
+      summary: Get default conversions for converting the project to different design
+        code.
       tags:
       - Conversion
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/{projectId}/change-code:
+  /api/2/projects/{projectId}/change-code:
     post:
       operationId: ChangeCode
       parameters:
-      - description: ""
+      - description: The unique identifier of the opened project in the ConnectionRestApi
+          service. (only ECEN projects are supported)
         explode: false
         in: path
         name: projectId
@@ -341,16 +345,21 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ConConversionSettings'
-        description: ""
+        description: Conversion table for materials in the project. (pairs 'ECEN MATERIAL'
+          -> 'TARGET DESIGN CODE MATERIAL')
       responses:
         "200":
+          content:
+            application/json:
+              schema:
+                type: string
           description: Success
       summary: Change design code of project.
       tags:
       - Conversion
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/{projectId}/connections/{connectionId}/export-iom:
+  /api/2/projects/{projectId}/connections/{connectionId}/export-iom:
     get:
       operationId: ExportIom
       parameters:
@@ -382,13 +391,20 @@ paths:
         style: form
       responses:
         "200":
+          content:
+            application/xml:
+              schema:
+                type: string
+            text/plain:
+              schema:
+                type: string
           description: Success
       summary: Export connection to XML which includes https://github.com/idea-statica/ideastatica-public/blob/main/src/IdeaRS.OpenModel/OpenModelContainer.cs
       tags:
       - Export
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/export-iom-connection-data:
+  /api/2/projects/{projectId}/connections/{connectionId}/export-iom-connection-data:
     get:
       operationId: ExportIomConnectionData
       parameters:
@@ -426,7 +442,7 @@ paths:
       - Export
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/export-ifc:
+  /api/2/projects/{projectId}/connections/{connectionId}/export-ifc:
     get:
       operationId: ExportIFC
       parameters:
@@ -450,6 +466,10 @@ paths:
         style: simple
       responses:
         "200":
+          content:
+            text/plain:
+              schema:
+                type: string
           description: Success
       summary: Export connection to IFC format
       tags:
@@ -457,7 +477,7 @@ paths:
       x-requiresProject: true
       x-requiresConnection: true
       x-extensionMethodName: ExportIfcFile
-  /api/1/projects/{projectId}/connections/{connectionId}/load-effects:
+  /api/2/projects/{projectId}/connections/{connectionId}/load-effects:
     get:
       operationId: GetLoadEffects
       parameters:
@@ -579,7 +599,7 @@ paths:
       - LoadEffect
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/load-effects/{loadEffectId}:
+  /api/2/projects/{projectId}/connections/{connectionId}/load-effects/{loadEffectId}:
     delete:
       operationId: DeleteLoadEffect
       parameters:
@@ -673,7 +693,7 @@ paths:
       - LoadEffect
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/load-effects/get-load-settings:
+  /api/2/projects/{projectId}/connections/{connectionId}/load-effects/get-load-settings:
     get:
       operationId: GetLoadSettings
       parameters:
@@ -707,7 +727,7 @@ paths:
       - LoadEffect
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/load-effects/set-load-settings:
+  /api/2/projects/{projectId}/connections/{connectionId}/load-effects/set-load-settings:
     post:
       operationId: SetLoadSettings
       parameters:
@@ -747,7 +767,7 @@ paths:
       - LoadEffect
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/materials:
+  /api/2/projects/{projectId}/materials:
     get:
       operationId: GetAllMaterials
       parameters:
@@ -774,7 +794,7 @@ paths:
       - Material
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/{projectId}/materials/steel:
+  /api/2/projects/{projectId}/materials/steel:
     get:
       operationId: GetSteelMaterials
       parameters:
@@ -828,7 +848,7 @@ paths:
       - Material
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/{projectId}/materials/concrete:
+  /api/2/projects/{projectId}/materials/concrete:
     get:
       operationId: GetConcreteMaterials
       parameters:
@@ -882,7 +902,7 @@ paths:
       - Material
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/{projectId}/materials/bolt-grade:
+  /api/2/projects/{projectId}/materials/bolt-grade:
     get:
       operationId: GetBoltGradeMaterials
       parameters:
@@ -936,7 +956,7 @@ paths:
       - Material
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/{projectId}/materials/welding:
+  /api/2/projects/{projectId}/materials/welding:
     get:
       operationId: GetWeldingMaterials
       parameters:
@@ -990,7 +1010,7 @@ paths:
       - Material
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/{projectId}/materials/cross-sections:
+  /api/2/projects/{projectId}/materials/cross-sections:
     get:
       operationId: GetCrossSections
       parameters:
@@ -1044,7 +1064,7 @@ paths:
       - Material
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/{projectId}/materials/bolt-assemblies:
+  /api/2/projects/{projectId}/materials/bolt-assemblies:
     get:
       operationId: GetBoltAssemblies
       parameters:
@@ -1098,7 +1118,7 @@ paths:
       - Material
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/{projectId}/connections/{connectionId}/members:
+  /api/2/projects/{projectId}/connections/{connectionId}/members:
     get:
       operationId: GetMembers
       parameters:
@@ -1175,7 +1195,7 @@ paths:
       - Member
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/members/{memberId}:
+  /api/2/projects/{projectId}/connections/{connectionId}/members/{memberId}:
     get:
       operationId: GetMember
       parameters:
@@ -1219,7 +1239,7 @@ paths:
       - Member
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/members/{memberId}/set-bearing-member:
+  /api/2/projects/{projectId}/connections/{connectionId}/members/{memberId}/set-bearing-member:
     put:
       operationId: SetBearingMember
       parameters:
@@ -1262,7 +1282,7 @@ paths:
       - Member
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/operations:
+  /api/2/projects/{projectId}/connections/{connectionId}/operations:
     delete:
       operationId: DeleteOperations
       parameters:
@@ -1329,7 +1349,7 @@ paths:
       - Operation
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/operations/common-properties:
+  /api/2/projects/{projectId}/connections/{connectionId}/operations/common-properties:
     get:
       operationId: GetCommonOperationProperties
       parameters:
@@ -1398,7 +1418,7 @@ paths:
       - Operation
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/parameters:
+  /api/2/projects/{projectId}/connections/{connectionId}/parameters:
     get:
       operationId: GetParameters
       parameters:
@@ -1445,7 +1465,7 @@ paths:
       x-requiresProject: true
       x-requiresConnection: true
     put:
-      operationId: UpdateParameters
+      operationId: Update
       parameters:
       - description: The unique identifier of the opened project in the ConnectionRestApi
           service
@@ -1479,9 +1499,7 @@ paths:
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/IdeaParameter'
-                type: array
+                $ref: '#/components/schemas/ParameterUpdateResponse'
           description: Success
       summary: Update parameters for the connection connectionId in the project projectId
         by values passed in parameters
@@ -1489,7 +1507,7 @@ paths:
       - Parameter
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/evaluate-expression:
+  /api/2/projects/{projectId}/connections/{connectionId}/evaluate-expression:
     post:
       operationId: EvaluateExpression
       parameters:
@@ -1530,7 +1548,7 @@ paths:
       - Parameter
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/clear-parameters:
+  /api/2/projects/{projectId}/connections/{connectionId}/clear-parameters:
     post:
       operationId: ClearParameters
       parameters:
@@ -1562,7 +1580,7 @@ paths:
       - Parameter
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/presentations:
+  /api/2/projects/{projectId}/connections/{connectionId}/presentations:
     get:
       operationId: GetDataScene3D
       parameters:
@@ -1597,7 +1615,7 @@ paths:
       - Presentation
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/presentations/text:
+  /api/2/projects/{projectId}/connections/{connectionId}/presentations/text:
     get:
       operationId: GetDataScene3DText
       parameters:
@@ -1634,7 +1652,7 @@ paths:
       - Presentation
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/open:
+  /api/2/projects/open:
     post:
       operationId: OpenProject
       requestBody:
@@ -1658,7 +1676,7 @@ paths:
       x-requiresProject: false
       x-requiresConnection: false
       x-extensionMethodName: OpenProject
-  /api/1/projects/{projectId}/close:
+  /api/2/projects/{projectId}/close:
     get:
       operationId: CloseProject
       parameters:
@@ -1683,7 +1701,7 @@ paths:
       - Project
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects:
+  /api/2/projects:
     get:
       operationId: GetActiveProjects
       responses:
@@ -1701,7 +1719,7 @@ paths:
       - Project
       x-requiresProject: false
       x-requiresConnection: false
-  /api/1/projects/{projectId}/download:
+  /api/2/projects/{projectId}/download:
     get:
       operationId: DownloadProject
       parameters:
@@ -1725,7 +1743,7 @@ paths:
       x-requiresProject: true
       x-requiresConnection: false
       x-extensionMethodName: SaveProject
-  /api/1/projects/{projectId}:
+  /api/2/projects/{projectId}:
     get:
       operationId: GetProjectData
       parameters:
@@ -1780,7 +1798,7 @@ paths:
       - Project
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/import-iom-file:
+  /api/2/projects/import-iom-file:
     post:
       operationId: ImportIOM
       requestBody:
@@ -1811,7 +1829,7 @@ paths:
       x-requiresProject: false
       x-requiresConnection: false
       x-extensionMethodName: CreateProjectFromIomFile
-  /api/1/projects/{projectId}/update-iom-file:
+  /api/2/projects/{projectId}/update-iom-file:
     post:
       operationId: UpdateFromIOM
       parameters:
@@ -1850,7 +1868,7 @@ paths:
       x-requiresProject: true
       x-requiresConnection: false
       x-extensionMethodName: UpdateProjectFromIomFile
-  /api/1/projects/{projectId}/connection-setup:
+  /api/2/projects/{projectId}/connection-setup:
     get:
       operationId: GetSetup
       parameters:
@@ -1907,7 +1925,7 @@ paths:
       - Project
       x-requiresProject: true
       x-requiresConnection: false
-  /api/1/projects/{projectId}/connections/{connectionId}/reports/pdf:
+  /api/2/projects/{projectId}/connections/{connectionId}/reports/pdf:
     get:
       operationId: GeneratePdf
       parameters:
@@ -1938,7 +1956,7 @@ paths:
       x-requiresProject: true
       x-requiresConnection: true
       x-extensionMethodName: SaveReportPdf
-  /api/1/projects/{projectId}/connections/{connectionId}/reports/word:
+  /api/2/projects/{projectId}/connections/{connectionId}/reports/word:
     get:
       operationId: GenerateWord
       parameters:
@@ -1969,7 +1987,7 @@ paths:
       x-requiresProject: true
       x-requiresConnection: true
       x-extensionMethodName: SaveReportWord
-  /api/1/projects/{projectId}/connections/{connectionId}/get-template:
+  /api/2/projects/{projectId}/connections/{connectionId}/get-template:
     get:
       operationId: CreateConTemplate
       parameters:
@@ -2004,7 +2022,7 @@ paths:
       - Template
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/get-default-mapping:
+  /api/2/projects/{projectId}/connections/{connectionId}/get-default-mapping:
     post:
       description: "The result IdeaStatiCa.Api.Connection.Model.TemplateConversionsDefault\
         \ mapping to apply the passed template.\r\nIt can be modified by a user and\
@@ -2050,7 +2068,7 @@ paths:
       - Template
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/apply-template:
+  /api/2/projects/{projectId}/connections/{connectionId}/apply-template:
     post:
       operationId: ApplyTemplate
       parameters:
@@ -2092,7 +2110,7 @@ paths:
       - Template
       x-requiresProject: true
       x-requiresConnection: true
-  /api/1/projects/{projectId}/connections/{connectionId}/clear-design:
+  /api/2/projects/{projectId}/connections/{connectionId}/clear-design:
     post:
       operationId: ClearDesign
       parameters:
@@ -2119,6 +2137,41 @@ paths:
         "200":
           description: Success
       summary: Clear the design of the connection connectionId in the project projectId
+      tags:
+      - Template
+      x-requiresProject: true
+      x-requiresConnection: true
+  /api/2/projects/{projectId}/connections/{connectionId}/get-topology:
+    get:
+      operationId: GetConnectionTopology
+      parameters:
+      - description: The unique identifier of the opened project in the ConnectionRestApi
+          service
+        explode: false
+        in: path
+        name: projectId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      - description: Id of the connection where to clear the design
+        explode: false
+        in: path
+        name: connectionId
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            text/plain:
+              schema:
+                type: string
+          description: Success
+      summary: Get topology of the connection in json format
       tags:
       - Template
       x-requiresProject: true
@@ -2853,6 +2906,29 @@ components:
           nullable: true
           type: array
       type: object
+    ConAlignedPlate:
+      additionalProperties: false
+      example:
+        plateSide: default
+        partType: notSpecified
+        memberId: 9
+      properties:
+        plateSide:
+          $ref: '#/components/schemas/ConAlignedPlateSideCodeEnum'
+        memberId:
+          format: int32
+          type: integer
+        partType:
+          $ref: '#/components/schemas/ConMemberPlatePartTypeEnum'
+      type: object
+    ConAlignedPlateSideCodeEnum:
+      enum:
+      - default
+      - lowerSide
+      - upperSide
+      - bothSides
+      - center
+      type: string
     ConAnalysisTypeEnum:
       enum:
       - stress_Strain
@@ -3094,8 +3170,34 @@ components:
         active: true
         isContinuous: true
         mirrorY: true
+        model:
+          x: 3.616076749251911
+          modelType: modelType
+          forcesIn: position
+          connectedMemberId: 2
         mirrorZ: true
-        id: 6
+        position:
+          alphaRotation: 5.962133916683182
+          gamaPitch: 1.4658129805029452
+          offsetEx: 5.637376656633329
+          offsetEy: 2.3021358869347655
+          relatedPlate:
+            plateSide: default
+            partType: notSpecified
+            memberId: 9
+          definedBy: none
+          axisX:
+            x: 2.027123023002322
+            "y": 4.145608029883936
+            z: 7.386281948385884
+          offsetEz: 7.061401241503109
+          betaDirection: 6.027456183070403
+          alignedPlate:
+            plateSide: default
+            partType: notSpecified
+            memberId: 9
+          align: none
+        id: 4
         crossSectionId: 0
         isBearing: true
       properties:
@@ -3113,6 +3215,10 @@ components:
           type: boolean
         isBearing:
           type: boolean
+        position:
+          $ref: '#/components/schemas/ConMemberPosition'
+        model:
+          $ref: '#/components/schemas/ConMemberModel'
         id:
           format: int32
           type: integer
@@ -3121,6 +3227,131 @@ components:
           type: string
         active:
           type: boolean
+      type: object
+    ConMemberAlignmentTypeEnum:
+      enum:
+      - none
+      - toMemberPlate
+      - toMemberPlateRotateThenTranslate
+      type: string
+    ConMemberForcesInEnum:
+      enum:
+      - position
+      - node
+      - bolts
+      - selectedMemberFace
+      type: string
+    ConMemberModel:
+      additionalProperties: false
+      example:
+        x: 3.616076749251911
+        modelType: modelType
+        forcesIn: position
+        connectedMemberId: 2
+      properties:
+        modelType:
+          nullable: true
+          type: string
+        forcesIn:
+          $ref: '#/components/schemas/ConMemberForcesInEnum'
+        x:
+          format: double
+          nullable: true
+          type: number
+        connectedMemberId:
+          format: int32
+          nullable: true
+          type: integer
+      type: object
+    ConMemberPlacementDefinitionTypeEnum:
+      enum:
+      - none
+      - directionVector
+      - rotationsOfX
+      - lcs
+      type: string
+    ConMemberPlatePartTypeEnum:
+      enum:
+      - notSpecified
+      - topFlange
+      - bottomFlange
+      - bothFlanges
+      - web
+      - allCssParts
+      - basePlate
+      - endPlate
+      - plateWidener
+      - stiffener
+      - rib
+      - gussetPlate
+      - finPlate
+      - flange
+      - cssArcSegment
+      - isStub
+      - splice
+      - tonguePlate
+      - lidPlate
+      - generalPlate
+      - doubler
+      - endPlateOnFlanges
+      - backingPlate
+      - insertedPlate
+      - isNegative
+      type: string
+    ConMemberPosition:
+      additionalProperties: false
+      example:
+        alphaRotation: 5.962133916683182
+        gamaPitch: 1.4658129805029452
+        offsetEx: 5.637376656633329
+        offsetEy: 2.3021358869347655
+        relatedPlate:
+          plateSide: default
+          partType: notSpecified
+          memberId: 9
+        definedBy: none
+        axisX:
+          x: 2.027123023002322
+          "y": 4.145608029883936
+          z: 7.386281948385884
+        offsetEz: 7.061401241503109
+        betaDirection: 6.027456183070403
+        alignedPlate:
+          plateSide: default
+          partType: notSpecified
+          memberId: 9
+        align: none
+      properties:
+        definedBy:
+          $ref: '#/components/schemas/ConMemberPlacementDefinitionTypeEnum'
+        axisX:
+          $ref: '#/components/schemas/Vector3D'
+        betaDirection:
+          format: double
+          nullable: true
+          type: number
+        gamaPitch:
+          format: double
+          nullable: true
+          type: number
+        alphaRotation:
+          format: double
+          type: number
+        offsetEx:
+          format: double
+          type: number
+        offsetEy:
+          format: double
+          type: number
+        offsetEz:
+          format: double
+          type: number
+        align:
+          $ref: '#/components/schemas/ConMemberAlignmentTypeEnum'
+        alignedPlate:
+          $ref: '#/components/schemas/ConAlignedPlate'
+        relatedPlate:
+          $ref: '#/components/schemas/ConAlignedPlate'
       type: object
     ConMprlCrossSection:
       additionalProperties: false
@@ -5003,6 +5234,7 @@ components:
         applyConeBreakoutCheck:
           $ref: '#/components/schemas/ConeBreakoutCheckType'
         pretensionForceFpc:
+          deprecated: true
           description: Pretension force fpc = k * fub * As
           format: double
           type: number
@@ -5097,6 +5329,7 @@ components:
             Braced system reduces horizontal displacements.
           type: boolean
         bearingCheck:
+          deprecated: true
           description: Apply bearing check including αb
           type: boolean
         applyBetapInfluence:
@@ -5159,6 +5392,7 @@ components:
           description: True if cracked concrete is considered
           type: boolean
         developedFillers:
+          deprecated: true
           description: True if developed fillers is considered
           type: boolean
         deformationBoltHole:
@@ -5180,6 +5414,7 @@ components:
           description: BaseMetalCapacity
           type: boolean
         applyBearingCheck:
+          deprecated: true
           description: ApplyBearingCheck
           type: boolean
         frictionCoefficientPbolt:
@@ -5189,7 +5424,7 @@ components:
         crtCompCheckIS:
           $ref: '#/components/schemas/CrtCompCheckIS'
         boltMaxGripLengthCoeff:
-          description: Max value of bolt grip
+          description: Max value of bolt grip IND
           format: double
           type: number
         fatigueSectionOffset:
@@ -5202,6 +5437,7 @@ components:
           format: double
           type: number
         gammaMu:
+          deprecated: true
           description: Partial safety factor for Horizontal tying
           format: double
           type: number
@@ -5767,8 +6003,19 @@ components:
         unit: unit
         validationExpression: validationExpression
         expression: expression
+        upperBound: upperBound
         description: description
+        lowerBound: lowerBound
         isVisible: true
+        parameterValidation:
+          validationExpression: validationExpression
+          upperBound: upperBound
+          upperBoundEvaluated: 6.027456183070403
+          validationExpressionEvaluated: true
+          lowerBound: lowerBound
+          message: message
+          validationStatus: validationStatus
+          lowerBoundEvaluated: 0.8008281904610115
         value: ""
         validationStatus: validationStatus
         key: key
@@ -5799,6 +6046,14 @@ components:
         isVisible:
           nullable: true
           type: boolean
+        lowerBound:
+          nullable: true
+          type: string
+        upperBound:
+          nullable: true
+          type: string
+        parameterValidation:
+          $ref: '#/components/schemas/IdeaParameterValidation'
       type: object
     IdeaParameterUpdate:
       additionalProperties: false
@@ -5810,6 +6065,59 @@ components:
           nullable: true
           type: string
         expression:
+          nullable: true
+          type: string
+      type: object
+    IdeaParameterValidation:
+      additionalProperties: false
+      example:
+        validationExpression: validationExpression
+        upperBound: upperBound
+        upperBoundEvaluated: 6.027456183070403
+        validationExpressionEvaluated: true
+        lowerBound: lowerBound
+        message: message
+        validationStatus: validationStatus
+        lowerBoundEvaluated: 0.8008281904610115
+      properties:
+        validationExpression:
+          nullable: true
+          type: string
+        validationExpressionEvaluated:
+          type: boolean
+        lowerBound:
+          nullable: true
+          type: string
+        lowerBoundEvaluated:
+          format: double
+          type: number
+        upperBound:
+          nullable: true
+          type: string
+        upperBoundEvaluated:
+          format: double
+          type: number
+        validationStatus:
+          nullable: true
+          type: string
+        message:
+          nullable: true
+          type: string
+      type: object
+    IdeaParameterValidationResponse:
+      additionalProperties: false
+      example:
+        message: message
+        validationStatus: validationStatus
+        key: key
+      properties:
+        key:
+          nullable: true
+          type: string
+        message:
+          nullable: true
+          type: string
+        validationStatus:
           nullable: true
           type: string
       type: object
@@ -5917,6 +6225,72 @@ components:
           description: List of messages
           items:
             $ref: '#/components/schemas/OpenMessage'
+          nullable: true
+          type: array
+      type: object
+    ParameterUpdateResponse:
+      additionalProperties: false
+      example:
+        setToModel: true
+        failedValidations:
+        - message: message
+          validationStatus: validationStatus
+          key: key
+        - message: message
+          validationStatus: validationStatus
+          key: key
+        parameters:
+        - parameterType: parameterType
+          unit: unit
+          validationExpression: validationExpression
+          expression: expression
+          upperBound: upperBound
+          description: description
+          lowerBound: lowerBound
+          isVisible: true
+          parameterValidation:
+            validationExpression: validationExpression
+            upperBound: upperBound
+            upperBoundEvaluated: 6.027456183070403
+            validationExpressionEvaluated: true
+            lowerBound: lowerBound
+            message: message
+            validationStatus: validationStatus
+            lowerBoundEvaluated: 0.8008281904610115
+          value: ""
+          validationStatus: validationStatus
+          key: key
+        - parameterType: parameterType
+          unit: unit
+          validationExpression: validationExpression
+          expression: expression
+          upperBound: upperBound
+          description: description
+          lowerBound: lowerBound
+          isVisible: true
+          parameterValidation:
+            validationExpression: validationExpression
+            upperBound: upperBound
+            upperBoundEvaluated: 6.027456183070403
+            validationExpressionEvaluated: true
+            lowerBound: lowerBound
+            message: message
+            validationStatus: validationStatus
+            lowerBoundEvaluated: 0.8008281904610115
+          value: ""
+          validationStatus: validationStatus
+          key: key
+      properties:
+        setToModel:
+          type: boolean
+        parameters:
+          items:
+            $ref: '#/components/schemas/IdeaParameter'
+          nullable: true
+          type: array
+        failedValidations:
+          items:
+            $ref: '#/components/schemas/IdeaParameterValidationResponse'
           nullable: true
           type: array
       type: object

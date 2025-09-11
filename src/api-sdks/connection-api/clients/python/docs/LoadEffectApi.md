@@ -34,34 +34,30 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_load_effect import ConLoadEffect
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def add_load_effectExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.LoadEffectApi(api_client)
     project_id = 'project_id_example' # str | 
     connection_id = 56 # int | 
     con_load_effect = ideastatica_connection_api.ConLoadEffect() # ConLoadEffect |  (optional)
 
     try:
         # Add new load effect to the connection
-        api_response = api_instance.add_load_effect(project_id, connection_id, con_load_effect=con_load_effect)
+        api_response = api_client.loadeffect.add_load_effect(project_id, connection_id, con_load_effect=con_load_effect)
         print("The response of LoadEffectApi->add_load_effect:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling LoadEffectApi->add_load_effect: %s\n" % e)
 ```
@@ -78,7 +74,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **POST** /api/1/projects/{projectId}/connections/{connectionId}/load-effects 
+> **POST** /api/2/projects/{projectId}/connections/{connectionId}/load-effects 
 
 ### Authorization
 
@@ -118,33 +114,29 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def delete_load_effectExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.LoadEffectApi(api_client)
     project_id = 'project_id_example' # str | 
     connection_id = 56 # int | 
     load_effect_id = 56 # int | 
 
     try:
         # Delete load effect loadEffectId
-        api_response = api_instance.delete_load_effect(project_id, connection_id, load_effect_id)
+        api_response = api_client.loadeffect.delete_load_effect(project_id, connection_id, load_effect_id)
         print("The response of LoadEffectApi->delete_load_effect:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling LoadEffectApi->delete_load_effect: %s\n" % e)
 ```
@@ -161,7 +153,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **DELETE** /api/1/projects/{projectId}/connections/{connectionId}/load-effects/{loadEffectId} 
+> **DELETE** /api/2/projects/{projectId}/connections/{connectionId}/load-effects/{loadEffectId} 
 
 ### Authorization
 
@@ -202,25 +194,20 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_load_effect import ConLoadEffect
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_load_effectExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.LoadEffectApi(api_client)
     project_id = 'project_id_example' # str | 
     connection_id = 56 # int | 
     load_effect_id = 56 # int | 
@@ -228,9 +215,10 @@ with ideastatica_connection_api.ApiClient(configuration) as api_client:
 
     try:
         # Get load impulses from loadEffectId
-        api_response = api_instance.get_load_effect(project_id, connection_id, load_effect_id, is_percentage=is_percentage)
+        api_response = api_client.loadeffect.get_load_effect(project_id, connection_id, load_effect_id, is_percentage=is_percentage)
         print("The response of LoadEffectApi->get_load_effect:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling LoadEffectApi->get_load_effect: %s\n" % e)
 ```
@@ -247,7 +235,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections/{connectionId}/load-effects/{loadEffectId} 
+> **GET** /api/2/projects/{projectId}/connections/{connectionId}/load-effects/{loadEffectId} 
 
 ### Authorization
 
@@ -287,34 +275,30 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_load_effect import ConLoadEffect
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_load_effectsExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.LoadEffectApi(api_client)
     project_id = 'project_id_example' # str | 
     connection_id = 56 # int | 
     is_percentage = True # bool |  (optional)
 
     try:
         # Get all load effects which are defined in connectionId
-        api_response = api_instance.get_load_effects(project_id, connection_id, is_percentage=is_percentage)
+        api_response = api_client.loadeffect.get_load_effects(project_id, connection_id, is_percentage=is_percentage)
         print("The response of LoadEffectApi->get_load_effects:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling LoadEffectApi->get_load_effects: %s\n" % e)
 ```
@@ -331,7 +315,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections/{connectionId}/load-effects 
+> **GET** /api/2/projects/{projectId}/connections/{connectionId}/load-effects 
 
 ### Authorization
 
@@ -370,33 +354,29 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_load_settings import ConLoadSettings
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_load_settingsExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.LoadEffectApi(api_client)
     project_id = 'project_id_example' # str | 
     connection_id = 56 # int | 
 
     try:
         # Get Load settings for connection in project
-        api_response = api_instance.get_load_settings(project_id, connection_id)
+        api_response = api_client.loadeffect.get_load_settings(project_id, connection_id)
         print("The response of LoadEffectApi->get_load_settings:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling LoadEffectApi->get_load_settings: %s\n" % e)
 ```
@@ -413,7 +393,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections/{connectionId}/load-effects/get-load-settings 
+> **GET** /api/2/projects/{projectId}/connections/{connectionId}/load-effects/get-load-settings 
 
 ### Authorization
 
@@ -453,34 +433,30 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_load_settings import ConLoadSettings
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def set_load_settingsExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.LoadEffectApi(api_client)
     project_id = 'project_id_example' # str | 
     connection_id = 56 # int | 
     con_load_settings = ideastatica_connection_api.ConLoadSettings() # ConLoadSettings |  (optional)
 
     try:
         # Set Load settings for connection in project
-        api_response = api_instance.set_load_settings(project_id, connection_id, con_load_settings=con_load_settings)
+        api_response = api_client.loadeffect.set_load_settings(project_id, connection_id, con_load_settings=con_load_settings)
         print("The response of LoadEffectApi->set_load_settings:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling LoadEffectApi->set_load_settings: %s\n" % e)
 ```
@@ -497,7 +473,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **POST** /api/1/projects/{projectId}/connections/{connectionId}/load-effects/set-load-settings 
+> **POST** /api/2/projects/{projectId}/connections/{connectionId}/load-effects/set-load-settings 
 
 ### Authorization
 
@@ -537,34 +513,30 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_load_effect import ConLoadEffect
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def update_load_effectExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.LoadEffectApi(api_client)
     project_id = 'project_id_example' # str | 
     connection_id = 56 # int | 
     con_load_effect = ideastatica_connection_api.ConLoadEffect() # ConLoadEffect |  (optional)
 
     try:
         # Update load impulses in conLoading
-        api_response = api_instance.update_load_effect(project_id, connection_id, con_load_effect=con_load_effect)
+        api_response = api_client.loadeffect.update_load_effect(project_id, connection_id, con_load_effect=con_load_effect)
         print("The response of LoadEffectApi->update_load_effect:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling LoadEffectApi->update_load_effect: %s\n" % e)
 ```
@@ -581,7 +553,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **PUT** /api/1/projects/{projectId}/connections/{connectionId}/load-effects 
+> **PUT** /api/2/projects/{projectId}/connections/{connectionId}/load-effects 
 
 ### Authorization
 

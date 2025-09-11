@@ -30,33 +30,29 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_connection import ConConnection
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_connectionExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ConnectionApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
     connection_id = 56 # int | The id of the requested connection
 
     try:
         # Get data about a specific connection in the project
-        api_response = api_instance.get_connection(project_id, connection_id)
+        api_response = api_client.connection.get_connection(project_id, connection_id)
         print("The response of ConnectionApi->get_connection:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ConnectionApi->get_connection: %s\n" % e)
 ```
@@ -73,7 +69,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections/{connectionId} 
+> **GET** /api/2/projects/{projectId}/connections/{connectionId} 
 
 ### Authorization
 
@@ -111,32 +107,28 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_connection import ConConnection
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_connectionsExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ConnectionApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
 
     try:
         # Get data about all connections in the project
-        api_response = api_instance.get_connections(project_id)
+        api_response = api_client.connection.get_connections(project_id)
         print("The response of ConnectionApi->get_connections:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ConnectionApi->get_connections: %s\n" % e)
 ```
@@ -153,7 +145,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections 
+> **GET** /api/2/projects/{projectId}/connections 
 
 ### Authorization
 
@@ -192,33 +184,29 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_production_cost import ConProductionCost
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def get_production_costExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ConnectionApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
     connection_id = 56 # int | Id of the requested connection
 
     try:
         # Get production cost of the connection
-        api_response = api_instance.get_production_cost(project_id, connection_id)
+        api_response = api_client.connection.get_production_cost(project_id, connection_id)
         print("The response of ConnectionApi->get_production_cost:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ConnectionApi->get_production_cost: %s\n" % e)
 ```
@@ -235,7 +223,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **GET** /api/1/projects/{projectId}/connections/{connectionId}/production-cost 
+> **GET** /api/2/projects/{projectId}/connections/{connectionId}/production-cost 
 
 ### Authorization
 
@@ -275,34 +263,30 @@ Name | Type | Description  | Notes
 
 ### Example
 
-
+Required Imports
 ```python
 import ideastatica_connection_api
 from ideastatica_connection_api.models.con_connection import ConConnection
 from ideastatica_connection_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = ideastatica_connection_api.Configuration(
-    host = "http://localhost"
-)
+```
 
+For client instantiation instructions, refer to the [[README]](../README.md) documentation. 
 
-# Enter a context with an instance of the API client
-with ideastatica_connection_api.ApiClient(configuration) as api_client:
+```python
+def update_connectionExampleFunc(api_client):
     
-    # Create an instance of the API class
-    api_instance = ideastatica_connection_api.ConnectionApi(api_client)
     project_id = 'project_id_example' # str | The unique identifier of the opened project in the ConnectionRestApi service
     connection_id = 56 # int | Id of the connection to be update
     con_connection = ideastatica_connection_api.ConConnection() # ConConnection | New connection data to be set (optional)
 
     try:
         # Update data of a specific connection in the project
-        api_response = api_instance.update_connection(project_id, connection_id, con_connection=con_connection)
+        api_response = api_client.connection.update_connection(project_id, connection_id, con_connection=con_connection)
         print("The response of ConnectionApi->update_connection:\n")
         pprint(api_response)
+        return api_response
     except Exception as e:
         print("Exception when calling ConnectionApi->update_connection: %s\n" % e)
 ```
@@ -319,7 +303,7 @@ Looking for a code sample? request some help on our [discussion](https://github.
 
 All URIs are relative to *http://localhost*
 
-> **PUT** /api/1/projects/{projectId}/connections/{connectionId} 
+> **PUT** /api/2/projects/{projectId}/connections/{connectionId} 
 
 ### Authorization
 

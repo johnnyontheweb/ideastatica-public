@@ -238,68 +238,26 @@ namespace IdeaStatiCa.TeklaStructuresPlugin
 			List<Tekla.Structures.Identifier> proceseedDetails = new List<Tekla.Structures.Identifier>();
 			while (partsEnumerator.MoveNext())
 			{
-				if (partsEnumerator.Current is TS.Part)
+				var partOfEnumerator = partsEnumerator.Current;
+				if (partOfEnumerator is TS.Part tsPart)
 				{
-					selectedItems.Add(partsEnumerator.Current);
-				}
-				else if (partsEnumerator.Current is TS.Detail detail)
-				{
-					if (proceseedDetails.Any(id => id.Equals(detail.Identifier)))
+					if (IdentifierHelper.AnchorMemberFilter(tsPart) && tsPart.GetFatherComponent() is TS.Detail detail)
 					{
-						plugInLogger.LogDebug($"ProcessUserSelection - skip {detail.Identifier} name:{detail.Name}");
-						//skip duplicity
-						continue;
+						ProcessDetailPart(selectedItems, proceseedDetails, detail);
+
 					}
 					else
 					{
-						proceseedDetails.Add(detail.Identifier);
+						selectedItems.Add(tsPart);
 					}
+				}
+				else if (partOfEnumerator is TS.Detail detail)
+				{
+					ProcessDetailPart(selectedItems, proceseedDetails, detail);
 
-					var detailItems = new List<TS.ModelObject>();
-					var anchorItems = new List<TS.ModelObject>();
-					bool notFoundAnchor = true;
-					// Find anchors from the detail
-					foreach (var detailItem in detail.GetChildren())
-					{
-						if (detailItem is TS.Part part)
-						{
-							detailItems.Add(part);
-
-							if (IdentifierHelper.AnchorMemberFilter(part)) //add only one anchor from group anchor importer than takes all anchor positions
-							{
-								if (notFoundAnchor)
-								{
-									anchorItems.Add(part);
-									notFoundAnchor = false;
-								}
-							}
-							else if (part is TS.Beam b && (!IdentifierHelper.WasherMemberFilter(part) && !IdentifierHelper.NutMemberFilter(part)))
-							{
-								anchorItems.Add(part);
-							}
-							else if (part is ContourPlate)
-							{
-								if (!IdentifierHelper.GroutFilter(part) && !IdentifierHelper.CastPlateFilter(part))
-								{
-									anchorItems.Add(part);
-								}
-							}
-						}
-					}
-
-					if (notFoundAnchor)
-					{
-						plugInLogger.LogDebug($"Standard component add all child items");
-						selectedItems.AddRange(detailItems);
-					}
-					else
-					{
-						plugInLogger.LogDebug($"Component with anchor add filtered subset of child parts");
-						selectedItems.AddRange(anchorItems);
-					}
 
 				}
-				else if (partsEnumerator.Current is TS.BaseComponent baseComponent)
+				else if (partOfEnumerator is TS.BaseComponent baseComponent)
 				{
 					plugInLogger.LogDebug($"Component {baseComponent.Name} add child parts");
 					foreach (var componentItem in baseComponent.GetChildren())
@@ -312,6 +270,63 @@ namespace IdeaStatiCa.TeklaStructuresPlugin
 				}
 			}
 			return selectedItems;
+		}
+
+		private void ProcessDetailPart(List<ModelObject> selectedItems, List<Tekla.Structures.Identifier> proceseedDetails, Detail detail)
+		{
+			if (proceseedDetails.Any(id => id.Equals(detail.Identifier)))
+			{
+				plugInLogger.LogDebug($"ProcessUserSelection - skip {detail.Identifier} name:{detail.Name}");
+				//skip duplicity
+				return;
+			}
+			else
+			{
+				proceseedDetails.Add(detail.Identifier);
+			}
+
+			var detailItems = new List<TS.ModelObject>();
+			var anchorItems = new List<TS.ModelObject>();
+			bool notFoundAnchor = true;
+			// Find anchors from the detail
+			foreach (var detailItem in detail.GetChildren())
+			{
+				if (detailItem is TS.Part part)
+				{
+					detailItems.Add(part);
+
+					if (IdentifierHelper.AnchorMemberFilter(part)) //add only one anchor from group anchor importer than takes all anchor positions
+					{
+						if (notFoundAnchor)
+						{
+							anchorItems.Add(part);
+							notFoundAnchor = false;
+						}
+					}
+					else if (part is TS.Beam b && (!IdentifierHelper.WasherMemberFilter(part) && !IdentifierHelper.NutMemberFilter(part)))
+					{
+						anchorItems.Add(part);
+					}
+					else if (part is ContourPlate)
+					{
+						if (!IdentifierHelper.GroutFilter(part) && !IdentifierHelper.CastPlateFilter(part))
+						{
+							anchorItems.Add(part);
+						}
+					}
+				}
+			}
+
+			if (notFoundAnchor)
+			{
+				plugInLogger.LogDebug($"Standard component add all child items");
+				selectedItems.AddRange(detailItems);
+			}
+			else
+			{
+				plugInLogger.LogDebug($"Component with anchor add filtered subset of child parts");
+				selectedItems.AddRange(anchorItems);
+			}
 		}
 
 		/// <summary>
@@ -527,60 +542,87 @@ namespace IdeaStatiCa.TeklaStructuresPlugin
 		}
 
 		/// <summary>
-		/// Check if has write permission
+		/// Check if the current user has write permission on the specified file or directory.
 		/// </summary>
-		/// <param name="FilePath"></param>
-		/// <returns></returns>
-		public static bool HasWritePermissionOnDir(string FilePath)
+		/// <param name="filePath">The path to the file or directory to check.</param>
+		/// <returns>True if the user has write permission, false otherwise.</returns>
+		public static bool HasWritePermissionOnDir(string filePath)
 		{
 			try
 			{
-				FileSystemSecurity security;
-				if (File.Exists(FilePath))
-				{
-					security = File.GetAccessControl(FilePath);
-				}
-				else
-				{
-					security = Directory.GetAccessControl(Path.GetDirectoryName(FilePath));
-				}
-				var rules = security.GetAccessRules(true, true, typeof(NTAccount));
+				AuthorizationRuleCollection rules;
 
-				var currentuser = new WindowsPrincipal(WindowsIdentity.GetCurrent());
+				// Check if the provided path points to a file
+				if (File.Exists(filePath))
+				{
+					// Get the access control list for the file
+					FileInfo fileInfo = new FileInfo(filePath);
+					FileSecurity fileSecurity = fileInfo.GetAccessControl();
+
+					// Get the access rules for the file
+					rules = fileSecurity.GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
+				}
+				else // Assume the path points to a directory
+				{
+					// Get the access control list for the directory
+					DirectoryInfo dirInfo = new DirectoryInfo(filePath);
+					DirectorySecurity dirSecurity = dirInfo.GetAccessControl();
+
+					// Get the access rules for the directory
+					rules = dirSecurity.GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
+				}
+
+				// Get the current user
+				var currentUser = new WindowsPrincipal(WindowsIdentity.GetCurrent());
 				bool result = false;
+
+				// Iterate through the access rules
 				foreach (FileSystemAccessRule rule in rules)
 				{
-					if (0 == (rule.FileSystemRights &
-						(FileSystemRights.WriteData | FileSystemRights.Write)))
+					// Check if the rule grants write permission
+					if (0 == (rule.FileSystemRights & (FileSystemRights.WriteData | FileSystemRights.Write)))
 					{
-						continue;
+						continue; // Skip if the rule does not grant write permission
 					}
 
+					// Check if the current user is in the role specified by the rule
 					if (rule.IdentityReference.Value.StartsWith("S-1-"))
 					{
+						// Create a SecurityIdentifier from the rule's identity reference
 						var sid = new SecurityIdentifier(rule.IdentityReference.Value);
-						if (!currentuser.IsInRole(sid))
+
+						// Skip if the current user is not in the role
+						if (!currentUser.IsInRole(sid))
 						{
 							continue;
 						}
 					}
 					else
 					{
-						if (!currentuser.IsInRole(rule.IdentityReference.Value))
+						// Skip if the current user is not in the role
+						if (!currentUser.IsInRole(rule.IdentityReference.Value))
 						{
 							continue;
 						}
 					}
 
+					// Determine if the rule grants or denies access
 					if (rule.AccessControlType == AccessControlType.Deny)
-						return false;
-					if (rule.AccessControlType == AccessControlType.Allow)
-						result = true;
+					{
+						return false; // Access is denied
+					}
+					else if (rule.AccessControlType == AccessControlType.Allow)
+					{
+						result = true; // Access is allowed
+					}
 				}
+
+				// Return the final result
 				return result;
 			}
 			catch
 			{
+				// An exception occurred, return false
 				return false;
 			}
 		}

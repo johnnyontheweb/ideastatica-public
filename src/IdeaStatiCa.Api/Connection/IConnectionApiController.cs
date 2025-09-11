@@ -80,10 +80,9 @@ namespace IdeaStatiCa.Api.Connection
 		/// Run requested type of CBFEM analysis for <paramref name="conToCalculateIds"/>
 		/// </summary>
 		/// <param name="conToCalculateIds">List of connections in the active project to calculate</param>
-		/// <param name="analysisType">Type of CBFEM analysis to run</param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		Task<List<ConResultSummary>> CalculateAsync(List<int> conToCalculateIds, ConAnalysisTypeEnum analysisType = ConAnalysisTypeEnum.Stress_Strain, CancellationToken cancellationToken = default);
+		Task<List<ConResultSummary>> CalculateAsync(List<int> conToCalculateIds, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get detailed calculation results for  <paramref name="conToCalculateIds"/>
@@ -303,14 +302,14 @@ namespace IdeaStatiCa.Api.Connection
 		/// <param name="cancellationToken"></param>
 		/// <returns>contemp string</returns>
 		Task<string> GetConnectionTemplateAsync(int connectionId, CancellationToken cancellationToken = default);
-		
-		
+
+
 		/// <summary>
 		/// Set bearing member
 		/// </summary>
-		/// <param name="v1"></param>
-		/// <param name="v2"></param>
-		/// <param name="none"></param>
+		/// <param name="connectionId"></param>
+		/// <param name="memberId"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		Task<ConMember> SetBearingMemberAsync(int connectionId, int memberId, CancellationToken cancellationToken = default);
 
@@ -318,7 +317,7 @@ namespace IdeaStatiCa.Api.Connection
 		/// Get load settings for given connection id
 		/// </summary>
 		/// <param name="id"></param>
-		/// <param name="none"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		Task<ConLoadSettings> GetLoadEffectLoadSettingsAsync(int id, CancellationToken cancellationToken = default);
 
@@ -326,7 +325,7 @@ namespace IdeaStatiCa.Api.Connection
 		/// Set load settings for given connection id
 		/// </summary>
 		/// <param name="id"></param>
-		/// <param name="none"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		Task<ConLoadSettings> SetLoadEffectLoadSettingsAsync(int id, ConLoadSettings settings, CancellationToken cancellationToken = default);
 
@@ -370,5 +369,56 @@ namespace IdeaStatiCa.Api.Connection
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		Task ChangeCodeType(ConConversionSettings conversionSettings, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Get project settings of active project
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		Task<Dictionary<string, object>> GetProjectSettingsAsync(string search = null, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Update project settings of active project
+		/// </summary>
+		/// <param name="settingUpdates"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		Task<Dictionary<string, object>> UpdateProjectSettingsAsync(Dictionary<string, object> settingUpdates, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Generate PDF for all connections
+		/// </summary>
+		/// <returns></returns>
+		Task<MemoryStream> GeneratePDFForMultiple(List<int> connectionIds, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Generate PDF for given connection
+		/// </summary>
+		/// <param name="connectionId"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		Task<MemoryStream> GeneratePDFForConnection(int connectionId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Generate Word for all connections
+		/// </summary>
+		/// <returns></returns>
+		Task<MemoryStream> GenerateWordForMultiple(List<int> connectionIds, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Generate Word for given connection
+		/// </summary>
+		/// <param name="connectionId"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		Task<MemoryStream> GenerateWordForConnection(int connectionId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Delete connection based on connectionId
+		/// </summary>
+		/// <param name="connectionId"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		Task DeleteConnectionAsync(int connectionId, CancellationToken cancellationToken = default);
 	}
 }
