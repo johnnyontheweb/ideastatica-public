@@ -1,3 +1,4 @@
+using IdeaRS.OpenModel.Model;
 using System;
 
 namespace IdeaStatiCa.BimApi
@@ -20,18 +21,6 @@ namespace IdeaStatiCa.BimApi
 		/// </summary>
 		//[Obsolete("Element cross-section are obsolete, use member cross-section or member spans for haunched members.")]
 		IIdeaCrossSection EndCrossSection { get; }
-
-		/// <summary>
-		/// Eccentricity (offset) at the start of the element.
-		/// It is defined in the local coordinate system.
-		/// </summary>
-		IdeaVector3D EccentricityBegin { get; }
-
-		/// <summary>
-		/// Eccentricity (offset) at the end of the element.
-		/// It is defined in the local coordinate system.
-		/// </summary>
-		IdeaVector3D EccentricityEnd { get; }
 
 		/// <summary>
 		/// Rotation of the element around the x-axis of the <see cref="Segment"/>'s LCS.

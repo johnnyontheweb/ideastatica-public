@@ -19,21 +19,20 @@ from enum import Enum
 from typing_extensions import Self
 
 
-class WeldEvaluation(str, Enum):
+class ConDesignSetType(str, Enum):
     """
-    WeldEvaluation
+    ConDesignSetType
     """
 
     """
     allowed enum values
     """
-    MAXFORCEELEMENT = 'maxForceElement'
-    FORCERESULTANT = 'forceResultant'
-    APPLYPLASTICWELDS = 'applyPlasticWelds'
+    PRIVATE = 'private'
+    COMPANY = 'company'
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:
-        """Create an instance of WeldEvaluation from a JSON string"""
+        """Create an instance of ConDesignSetType from a JSON string"""
         return cls(json.loads(json_str))
 
 

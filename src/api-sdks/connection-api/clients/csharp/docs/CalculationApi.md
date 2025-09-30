@@ -2,15 +2,15 @@
 
 | Method  | Description |
 |--------|-------------|
-| [**CalculateAsync**](CalculationApi.md#calculateasync) | Run CBFEM caluclation and return the summary of the results |
+| [**CalculateAsync**](CalculationApi.md#calculateasync) |  |
 | [**GetRawJsonResultsAsync**](CalculationApi.md#getrawjsonresultsasync) | Get json string which represents raw CBFEM results (an instance of CheckResultsData) |
 | [**GetResultsAsync**](CalculationApi.md#getresultsasync) | Get detailed results of the CBFEM analysis |
 
 <a id="calculate"></a>
 ## **CalculateAsync**
-> **List&lt;ConResultSummary&gt; CalculateAsync (Guid projectId, ConCalculationParameter conCalculationParameter)**
+> **List&lt;ConResultSummary&gt; CalculateAsync (Guid projectId, List<int> requestBody)**
 
-Run CBFEM caluclation and return the summary of the results
+
 
 
 
@@ -18,8 +18,8 @@ Run CBFEM caluclation and return the summary of the results
 
 | Name | Type | Description | Notes |
 |------|------|-------------|-------|
-| **projectId** | **Guid** | The unique identifier of the opened project in the ConnectionRestApi service |  |
-| **conCalculationParameter** | [**ConCalculationParameter**](ConCalculationParameter.md) | List of connections to calculate and a type of CBFEM analysis |  |
+| **projectId** | **Guid** |  |  |
+| **requestBody** | [**List&lt;int&gt;**](int.md) |  |  |
 
 ### Return type
 
@@ -57,12 +57,11 @@ namespace Example
                     Guid projectId = projData.ProjectId;
                     
                     // (Required) Select parameters
-                    var conCalculationParameter = new ConCalculationParameter(); // ConCalculationParameter | List of connections to calculate and a type of CBFEM analysis
+                    var requestBody = new List<int>(); // List<int> | 
 
                     try
                     {
-                        // Run CBFEM caluclation and return the summary of the results
-                        List<ConResultSummary> result = await conClient.Calculation.CalculateAsync(projectId, conCalculationParameter);
+                        List<ConResultSummary> result = await conClient.Calculation.CalculateAsync(projectId, requestBody);
                         Debug.WriteLine(result);
                     }
                     catch (ApiException  e)
@@ -102,8 +101,7 @@ This returns an ApiResponse object which contains the response data, status code
 ```csharp
 try
 {
-    // Run CBFEM caluclation and return the summary of the results
-    ApiResponse<List<ConResultSummary>> response = conClient.Calculation.CalculateWithHttpInfo(projectId, conCalculationParameter);
+    ApiResponse<List<ConResultSummary>> response = conClient.Calculation.CalculateWithHttpInfo(projectId, requestBody);
     Debug.Write("Status Code: " + response.StatusCode);
     Debug.Write("Response Headers: " + response.Headers);
     Debug.Write("Response Body: " + response.Data);
@@ -129,7 +127,7 @@ No authorization required
 #### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Success |  -  |
+| **200** | OK |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -256,13 +254,13 @@ No authorization required
 #### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Success |  -  |
+| **200** | OK |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 <a id="getresults"></a>
 ## **GetResultsAsync**
-> **List&lt;ConnectionCheckRes&gt; GetResultsAsync (Guid projectId, ConCalculationParameter conCalculationParameter = null)**
+> **List&lt;ConnectionCheckRes&gt; GetResultsAsync (Guid projectId, List<int> requestBody)**
 
 Get detailed results of the CBFEM analysis
 
@@ -273,7 +271,7 @@ Get detailed results of the CBFEM analysis
 | Name | Type | Description | Notes |
 |------|------|-------------|-------|
 | **projectId** | **Guid** | The unique identifier of the opened project in the ConnectionRestApi service |  |
-| **conCalculationParameter** | [**ConCalculationParameter**](ConCalculationParameter.md) | List of connections to calculate and a type of CBFEM analysis | [optional]  |
+| **requestBody** | [**List&lt;int&gt;**](int.md) | List of connections to calculate and a type of CBFEM analysis |  |
 
 ### Return type
 
@@ -311,12 +309,12 @@ namespace Example
                     Guid projectId = projData.ProjectId;
                     
                     // (Required) Select parameters
-                    var conCalculationParameter = new ConCalculationParameter(); // ConCalculationParameter | List of connections to calculate and a type of CBFEM analysis (optional) 
+                    var requestBody = new List<int>(); // List<int> | List of connections to calculate and a type of CBFEM analysis
 
                     try
                     {
                         // Get detailed results of the CBFEM analysis
-                        List<ConnectionCheckRes> result = await conClient.Calculation.GetResultsAsync(projectId, conCalculationParameter);
+                        List<ConnectionCheckRes> result = await conClient.Calculation.GetResultsAsync(projectId, requestBody);
                         Debug.WriteLine(result);
                     }
                     catch (ApiException  e)
@@ -357,7 +355,7 @@ This returns an ApiResponse object which contains the response data, status code
 try
 {
     // Get detailed results of the CBFEM analysis
-    ApiResponse<List<ConnectionCheckRes>> response = conClient.Calculation.GetResultsWithHttpInfo(projectId, conCalculationParameter);
+    ApiResponse<List<ConnectionCheckRes>> response = conClient.Calculation.GetResultsWithHttpInfo(projectId, requestBody);
     Debug.Write("Status Code: " + response.StatusCode);
     Debug.Write("Response Headers: " + response.Headers);
     Debug.Write("Response Body: " + response.Data);
@@ -383,7 +381,7 @@ No authorization required
 #### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Success |  -  |
+| **200** | OK |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

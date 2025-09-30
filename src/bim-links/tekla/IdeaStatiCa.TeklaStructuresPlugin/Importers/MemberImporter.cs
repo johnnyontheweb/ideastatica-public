@@ -75,7 +75,23 @@ namespace IdeaStatiCa.TeklaStructuresPlugin.Importers
 		private double GetRotation(Part beam)
 		{
 			PlugInLogger.LogInformation($"MemberImporter GetRotation");
-			return Math.PI / 2;
+
+			var css = Get<IIdeaCrossSection>($"{beam.Profile.ProfileString};{beam.Material.MaterialString}");
+
+			if (css is IdeaStatiCa.TeklaStructuresPlugin.BimApi.Library.CrossSectionByName
+				|| (
+					css is CrossSectionByParameters cssParam
+					&&
+					(cssParam.Type == IdeaRS.OpenModel.CrossSection.CrossSectionType.RolledAngle)
+					)
+				)
+			{
+				return Math.PI / 2;
+			}
+			else
+			{
+				return -Math.PI / 2;
+			}
 		}
 		private CoordSystemByVector GetMemberLCS(Part member)
 		{
@@ -140,8 +156,8 @@ namespace IdeaStatiCa.TeklaStructuresPlugin.Importers
 			{
 				Segment = CreateSegment(member, lcs),
 				RotationRx = rotation,
-				EccentricityBegin = GetEccentricity(member),
-				EccentricityEnd = GetEccentricity(member)
+				//EccentricityBegin = GetEccentricity(member),
+				//EccentricityEnd = GetEccentricity(member)
 			};
 		}
 

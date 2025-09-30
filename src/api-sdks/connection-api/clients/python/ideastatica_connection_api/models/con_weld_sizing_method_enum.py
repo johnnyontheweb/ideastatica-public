@@ -19,20 +19,22 @@ from enum import Enum
 from typing_extensions import Self
 
 
-class CrtCompCheckIS(str, Enum):
+class ConWeldSizingMethodEnum(str, Enum):
     """
-    CRT IS check
+    ConWeldSizingMethodEnum
     """
 
     """
     allowed enum values
     """
-    I_S800_CL_7_4 = 'iS800_Cl_7_4'
-    I_S456_CL_34_4 = 'iS456_Cl_34_4'
+    FULLSTRENGTH = 'fullStrength'
+    MINIMUMDUCTILITY = 'minimumDuctility'
+    OVERSTRENGTHFACTOR = 'overStrengthFactor'
+    CAPACITYESTIMATION = 'capacityEstimation'
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:
-        """Create an instance of CrtCompCheckIS from a JSON string"""
+        """Create an instance of ConWeldSizingMethodEnum from a JSON string"""
         return cls(json.loads(json_str))
 
 

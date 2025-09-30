@@ -1,6 +1,6 @@
-using IdeaStatiCa.BimApiLink.Identifiers;
 using IdeaStatiCa.BimApi;
 using IdeaStatiCa.BimApi.Results;
+using IdeaStatiCa.BimApiLink.Identifiers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,10 +11,6 @@ namespace IdeaStatiCa.BimApiLink.BimApi
 		public virtual IIdeaCrossSection StartCrossSection { get; set; } = null;
 
 		public virtual IIdeaCrossSection EndCrossSection { get; set; } = null;
-
-		public virtual IdeaVector3D EccentricityBegin { get; set; } = new IdeaVector3D(0, 0, 0);
-
-		public virtual IdeaVector3D EccentricityEnd { get; set; } = new IdeaVector3D(0, 0, 0);
 
 		public virtual double RotationRx { get; set; }
 
